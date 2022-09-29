@@ -55,8 +55,8 @@ note left of Client:"I found the word"
     Client->>Server :"post /score var..."
     Server->>ScoreAPI :""
     ScoreAPI->>Server :"Update local score"
-
 ```
+
 
 
 
