@@ -2,9 +2,10 @@
 
 <html>
     Bonjour vous êtes dans le login</br>
-    Entrez votre Name
+    Entrez votre Name et votre mot de Passe
     <form id="login-form" action='post'>
         <input id="inputName" type="text" name="clientName" >
+        <input id="inputPassword" type="password" name="clientPassword" >
         <input type="submit" value="Submit Name">
     </form>
 </html>
@@ -16,11 +17,12 @@
         // prevent change of page on submit 
         event.preventDefault()
 
+        
         // get client input
-        const clientInput = event.target[0].value
+        const nameInput = event.target[0]
 
         // set localStorage item
-        localStorage.setItem('name',clientInput)
+        localStorage.setItem('name',nameInput)
 
         // set anti cheat
         localStorage.setItem('previousWord','')
