@@ -36,6 +36,21 @@ app.get('/score', (req,res)=>{
   res.send('/score.html')
 })
 
+// Week 2 auth TD
+// add express session
+const session = require('express-session')
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 's3Cur3',
+  name: 'sessionId'
+}))
+
+// session
+app.get('/session', (req,res)=>{
+  res.send(req.session)
+})
+
+
 app.listen(port, () => {
   console.log(`listening on http://localhost:${port}`)
 })
