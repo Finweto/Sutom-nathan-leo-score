@@ -1,0 +1,52 @@
+<link rel="stylesheet" type="text/css" href="/css/style.css" />
+
+
+<html>
+
+<body>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    LE MOT
+                </td>
+                <td>
+                    NOMBRE D'ESSAI
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr id="scores">
+                <td id="mot">
+
+                </td>
+                <td id="nbrTry">
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        const scores = JSON.parse(localStorage.getItem('scores'))
+        const row = document.getElementById('scores')
+        console.log(row.childNodes[1])
+
+        scores.forEach((elem, i) => {
+            const newRow = row.cloneNode(true)
+            let tdmot = newRow.childNodes[1]
+            let tdtry = newRow.childNodes[3]
+            tdmot.innerHTML = elem.mot
+            tdtry.innerHTML = elem.tries
+
+            row.before(newRow)
+        })
+
+    })
+</script>

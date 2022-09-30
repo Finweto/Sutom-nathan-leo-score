@@ -1,0 +1,176 @@
+<html>
+
+<link rel="stylesheet" type="text/css" href="/css/style.css" />
+
+<body>
+  <h1 id="name-storage"></h1>
+  <h2 id="score-storage"></h2>
+  <h1 id="todaysWordLength"></h1>
+  <form id="loading" type="submit">
+    <input id="word-of-the-day-button" type="submit" value="Click to load word of the day !">
+  </form>
+  <form id="sutom-form" action='post' hidden>
+    <input id="inputClient" type="text" name="clientWord">
+    <input type="submit" value="Submit">
+  </form>
+  <span hidden id="word-of-the-day"></span>
+  <div class="tables">
+    <table id="foundWord"></table>
+  </div>
+
+  <form id="goToScore" type="submit">
+    <input type="submit" value="Click to see your score">
+  </form>
+</body>
+
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+<script type="module">
+  // initialiaze nbGuess
+  let nbGuess = 1
+
+  // ON LOAD
+  $(document).ready(function () {
+    // redirect to login if no local name
+    if (localStorage.getItem('name')) {
+      console.log(localStorage.getItem('name'))
+      const localName = localStorage.getItem('name')
+      document.getElementById('name-storage').innerHTML = `Vous avez trouve ${localName} mot`
+    }
+    else {
+      console.log('redirection')
+      document.location = "/login.html"
+    }
+
+    // SCORE STORAGE
+    if (!localStorage.getItem('score')) {
+      localStorage.setItem('score', 0)
+    }
+    const localScore = localStorage.getItem('score')
+    document.getElementById('score-storage').innerHTML = `Votre score est : ${localScore}`
+  })
+
+  // GO TO SCORE PAGE
+  document.getElementById("goToScore").addEventListener("submit", function (event) {
+    event.preventDefault()
+    console.log('redirection vers page score')
+
+    document.location = '/score.html'
+  })
+
+  // LOADING OF TODAY'S WORD
+  document.getElementById("loading").addEventListener("submit", function (event) {
+    // prevent change of page on submit 
+    event.preventDefault()
+
+    // get tab of word list
+    $.get('/text', (data) => {
+      const tabOfWords = data.tabOfWords
+
+      // get seed of the day
+      const date = new Date()
+      const seed = date.getDay()
+
+      // choose word of the day
+      const index = seed % tabOfWords.length * 599
+      const todaysWord = tabOfWords[index]
+      document.getElementById("word-of-the-day").innerHTML = todaysWord
+
+      // fill table foundWord with unknown values to show length
+      todaysWord.split('').forEach((element, index) => {
+        $('#foundWord').append(`<td id=${index}></td>`)
+      })
+
+      // show today's word length to client
+      document.getElementById("todaysWordLength").innerHTML = `La longueur du mot d'aujourd'hui est ${todaysWord.length}`
+
+      // change attribute of forms
+      document.getElementById("inputClient").setAttribute("maxlength", todaysWord.length)
+      document.getElementById("inputClient").setAttribute("minlength", todaysWord.length)
+      document.getElementById("loading").hidden = true;
+      document.getElementById("sutom-form").hidden = false;
+
+      // notify today's word is loaded
+      console.log('word of the day loaded !')
+    })
+  })
+
+  // FEATURES OF MOTUS
+  document.getElementById("sutom-form").addEventListener("submit", function (event) {
+    event.preventDefault()
+
+    // New array to keep history of tries
+    const table = document.getElementById("foundWord")
+    const newTable = table.cloneNode(true)
+    newTable.id = "previousTry"
+    table.after(newTable)
+
+    // todays word tab
+    const todaysWord = document.getElementById('word-of-the-day')
+    const tabTodaysWord = todaysWord.innerHTML.split('')
+
+    // clientInput 
+    const clientInput = event.target[0].value
+    const tabOfClientInput = clientInput.split('')
+
+    // Let's compare the client guesses and the word of the day !
+    // missing feature, can't see if multiple occurrence of letter in guess so will return the same response for two same letters
+    tabOfClientInput.forEach((clientLetter, index) => {
+      $(`#${index}`)[0].innerHTML = clientLetter
+      if (clientLetter == tabTodaysWord[index]) {
+        // good guess
+        $(`#${index}`)[0].style.color = "green"
+      } else if (tabTodaysWord.includes(clientLetter)) {
+        // good but not on good index
+        $(`#${index}`)[0].style.color = "orange"
+      } else {
+        // wrong
+        $(`#${index}`)[0].style.color = "black"
+      }
+    });
+
+    // check for win 
+    if (clientInput === todaysWord.innerHTML) {
+
+      // check for cheat
+      if (clientInput != localStorage.getItem('previousWord')) {
+
+        // change previousWord
+        localStorage.setItem('previousWord', clientInput)
+
+        // change score
+        const localScore = localStorage.getItem('score')
+        let newScore = parseInt(localScore)
+        newScore++
+        localStorage.setItem('score', newScore)
+        document.getElementById('score-storage').innerHTML = `Vous avez trouve ${newScore} mot`
+
+        
+
+        // set tries
+        let nbTry = parseInt(localStorage.getItem("nbTry")) + 1;
+        let avg = (parseInt(localStorage.getItem("avgTry")) * (nbTry - 1) + nbGuess) / nbTry;
+        localStorage.setItem("nbTry", nbTry);
+        localStorage.setItem("avgTry", avg);
+
+        // add to scores
+        let scores = JSON.parse(localStorage.getItem('scores'))
+        scores.push({ mot: clientInput,tries:nbGuess})
+        localStorage.setItem('scores',JSON.stringify(scores))
+        // simple message win
+        alert("VOUS AVEZ GAGNE")
+      }
+
+      else {
+        alert("Vous essayez de tricher lo")
+      }
+
+    } else {
+      nbGuess++
+    }
+
+  })
+
+</script>

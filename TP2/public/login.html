@@ -1,0 +1,39 @@
+<link rel="stylesheet" type="text/css" href="/css/style.css"/>
+
+<html>
+    Bonjour vous êtes dans le login</br>
+    Entrez votre Name
+    <form id="login-form" action='post'>
+        <input id="inputName" type="text" name="clientName" >
+        <input type="submit" value="Submit Name">
+    </form>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+<script type="module">
+    document.getElementById("login-form").addEventListener("submit", function (event) {
+        // prevent change of page on submit 
+        event.preventDefault()
+
+        // get client input
+        const clientInput = event.target[0].value
+
+        // set localStorage item
+        localStorage.setItem('name',clientInput)
+
+        // set anti cheat
+        localStorage.setItem('previousWord','')
+
+        // set score obj
+        localStorage.setItem('scores',JSON.stringify([]))
+        
+
+        // set Tries
+        localStorage.setItem("avgTry",0);
+        localStorage.setItem("nbTry",0);
+
+        // redirect to index.html
+        document.location = "/"
+    })
+</script>

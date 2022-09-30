@@ -1,0 +1,13 @@
+body {
+    background-color:aquamarine;
+    background-size:     cover;                      
+    background-repeat:   no-repeat;
+    background-position: center center; 
+    text-align: center;
+}
+
+.tables{
+    padding-left: 45%;
+    padding-right: 45%;
+}
+
