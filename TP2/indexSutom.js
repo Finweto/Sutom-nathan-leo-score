@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 
 // send tab of wordsList to app
 app.get('/text', (req, res) => {
-  path = "TP2/data/liste_francais_utf8.txt"
+  path = "./data/liste_francais_utf8.txt"
   const words = fs.readFileSync(path,'utf8')
   const tabOfWords = words.split(/\r?\n/);
   res.json({tabOfWords})
