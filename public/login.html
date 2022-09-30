@@ -16,10 +16,12 @@
     document.getElementById("login-form").addEventListener("submit", function (event) {
         // prevent change of page on submit 
         event.preventDefault()
-
+        
         
         // get client input
-        const nameInput = event.target[0]
+        const nameInput = event.target[0].value
+        const passwordInput = event.target[1].value
+        
 
         // set localStorage item
         localStorage.setItem('name',nameInput)
@@ -35,7 +37,12 @@
         localStorage.setItem("avgTry",0);
         localStorage.setItem("nbTry",0);
 
-        // redirect to index.html
-        document.location = "/"
+        // send data to server
+        
+        $.post('/verifyLogin',{name:nameInput ,password:passwordInput},(data)=>{
+            document.location = '/redirect'
+        })
+        
+        
     })
 </script>

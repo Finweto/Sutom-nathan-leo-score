@@ -6,18 +6,27 @@ const app = express()
 const port = process.env.PORT || 3000 
 const fs = require('fs')
 const os =require('os')
+const cors = require('cors')
 
-// login
-app.get('/login', (req,res)=>{
-  res.sendFile(__dirname+'/public/login.html')
-})
-
-// add express-ession
-app.set('trust proxy', 1) // trust first proxy
+// add express-session
+//app.set('trust proxy', 1) // trust first proxy
 app.use(session({
   secret: 's3Cur3',
-  name: 'sessionId'
+  name: 'sessionId',
+  saveUninitialized:true,
+  resave:true,
+  cookie: { 
+    secure: false,
+    httpOnly: true
+  }
 }))
+
+
+app.get('/callback',(res,req)=>{
+  console.log(req.session)
+  req.session['user'] = "couocu"
+  res.redirect('/')
+})
 
 // auto redirecting if not authentified
 app.use((req,res,next)=>{ 
@@ -27,7 +36,7 @@ app.use((req,res,next)=>{
       next()
   }else{
     console.log('session does not exist -> redirecting to login')
-    res.redirect('/login')
+    res.redirect('http://localhost:5000/authorize?client_id=Sutom-nathan-leo&scope=openid,profile&redirect_uri=http://localhost:3000/callback&nounce=XXXX')
   }
 })
 
@@ -45,6 +54,7 @@ app.get('/text', (req, res) => {
   const tabOfWords = words.split(/\r?\n/);
   res.json({tabOfWords})
 })
+
 
 
 app.get('/port', (req,res)=>{
