@@ -29,6 +29,7 @@ app.get('/callback',(res,req)=>{
 })
 
 // auto redirecting if not authentified
+/*
 app.use((req,res,next)=>{ 
   if(req.session && req.session.user){
     
@@ -39,7 +40,7 @@ app.use((req,res,next)=>{
     res.redirect('http://localhost:5000/authorize?client_id=Sutom-nathan-leo&scope=openid,profile&redirect_uri=http://localhost:3000/callback&nounce=XXXX')
   }
 })
-
+*/
 // use public files
 app.use(express.static(__dirname+'/public'));
 
@@ -52,7 +53,17 @@ app.get('/text', (req, res) => {
   path = "./data/liste_francais_utf8.txt"
   const words = fs.readFileSync(path,'utf8')
   const tabOfWords = words.split(/\r?\n/);
-  res.json({tabOfWords})
+
+  // get seed of the day
+  const date = new Date()
+  const seed = date.getDay()
+
+  // choose word of the day
+  const index = seed % tabOfWords.length * 599
+  const todaysWord = tabOfWords[index]
+  
+
+  res.json({todaysWord})
 })
 
 
