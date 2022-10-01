@@ -6,10 +6,7 @@
   <h1 id="name-storage"></h1>
   <h2 id="score-storage"></h2>
   <h1 id="todaysWordLength"></h1>
-  <form id="loading" type="submit">
-    <input id="word-of-the-day-button" type="submit" value="Click to load word of the day !">
-  </form>
-  <form id="sutom-form" action='post' hidden>
+  <form id="sutom-form" action='post'>
     <input id="inputClient" type="text" name="clientWord">
     <input type="submit" value="Submit">
   </form>
@@ -33,11 +30,36 @@
 
   // ON LOAD
   $(document).ready(function () {
+
+    // LOADING OF TODAY'S WORD
+    $.get('/text', (data) => {
+
+      // get word of the day
+      const todaysWord = data.todaysWord
+
+      // change hidden value to know word of the day for devs
+      document.getElementById("word-of-the-day").innerHTML = todaysWord
+
+      // fill table foundWord with unknown values to show length
+      todaysWord.split('').forEach((element, index) => {
+        $('#foundWord').append(`<td id=${index}></td>`)
+      })
+
+      // show today's word length to client
+      document.getElementById("todaysWordLength").innerHTML = `La longueur du mot d'aujourd'hui est ${todaysWord.length}`
+
+      // change attribute of forms
+      document.getElementById("inputClient").setAttribute("maxlength", todaysWord.length)
+      document.getElementById("inputClient").setAttribute("minlength", todaysWord.length)
+
+      // notify today's word is loaded
+      console.log('word of the day loaded !')
+    })
+
     // redirect to login if no local name
     if (localStorage.getItem('name')) {
-      console.log(localStorage.getItem('name'))
       const localName = localStorage.getItem('name')
-      document.getElementById('name-storage').innerHTML = `Vous avez trouve ${localName} mot`
+      document.getElementById('name-storage').innerHTML = `Bonjour ${localName}`
     }
     else {
       console.log('redirection')
@@ -58,43 +80,6 @@
     console.log('redirection vers page score')
 
     document.location = '/score.html'
-  })
-
-  // LOADING OF TODAY'S WORD
-  document.getElementById("loading").addEventListener("submit", function (event) {
-    // prevent change of page on submit 
-    event.preventDefault()
-
-    // get tab of word list
-    $.get('/text', (data) => {
-      const tabOfWords = data.tabOfWords
-
-      // get seed of the day
-      const date = new Date()
-      const seed = date.getDay()
-
-      // choose word of the day
-      const index = seed % tabOfWords.length * 599
-      const todaysWord = tabOfWords[index]
-      document.getElementById("word-of-the-day").innerHTML = todaysWord
-
-      // fill table foundWord with unknown values to show length
-      todaysWord.split('').forEach((element, index) => {
-        $('#foundWord').append(`<td id=${index}></td>`)
-      })
-
-      // show today's word length to client
-      document.getElementById("todaysWordLength").innerHTML = `La longueur du mot d'aujourd'hui est ${todaysWord.length}`
-
-      // change attribute of forms
-      document.getElementById("inputClient").setAttribute("maxlength", todaysWord.length)
-      document.getElementById("inputClient").setAttribute("minlength", todaysWord.length)
-      document.getElementById("loading").hidden = true;
-      document.getElementById("sutom-form").hidden = false;
-
-      // notify today's word is loaded
-      console.log('word of the day loaded !')
-    })
   })
 
   // FEATURES OF MOTUS
@@ -129,7 +114,7 @@
         // wrong
         $(`#${index}`)[0].style.color = "black"
       }
-    });
+    })
 
     // check for win 
     if (clientInput === todaysWord.innerHTML) {
@@ -147,8 +132,6 @@
         localStorage.setItem('score', newScore)
         document.getElementById('score-storage').innerHTML = `Vous avez trouve ${newScore} mot`
 
-        
-
         // set tries
         let nbTry = parseInt(localStorage.getItem("nbTry")) + 1;
         let avg = (parseInt(localStorage.getItem("avgTry")) * (nbTry - 1) + nbGuess) / nbTry;
@@ -157,14 +140,16 @@
 
         // add to scores
         let scores = JSON.parse(localStorage.getItem('scores'))
-        scores.push({ mot: clientInput,tries:nbGuess})
-        localStorage.setItem('scores',JSON.stringify(scores))
+        scores.push({ mot: clientInput, tries: nbGuess })
+        localStorage.setItem('scores', JSON.stringify(scores))
+
         // simple message win
         alert("VOUS AVEZ GAGNE")
       }
 
       else {
-        alert("Vous essayez de tricher lo")
+        // user is trying to guess the same word again to gain score
+        alert("Vous avez déjà trouvé ce mot")
       }
 
     } else {
