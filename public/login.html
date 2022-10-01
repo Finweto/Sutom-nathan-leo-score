@@ -2,9 +2,10 @@
 
 <html>
     Bonjour vous êtes dans le login</br>
-    Entrez votre Name
+    Entrez votre Name et votre mot de Passe
     <form id="login-form" action='post'>
         <input id="inputName" type="text" name="clientName" >
+        <input id="inputPassword" type="password" name="clientPassword" >
         <input type="submit" value="Submit Name">
     </form>
 </html>
@@ -15,12 +16,15 @@
     document.getElementById("login-form").addEventListener("submit", function (event) {
         // prevent change of page on submit 
         event.preventDefault()
-
+        
+        
         // get client input
-        const clientInput = event.target[0].value
+        const nameInput = event.target[0].value
+        const passwordInput = event.target[1].value
+        
 
         // set localStorage item
-        localStorage.setItem('name',clientInput)
+        localStorage.setItem('name',nameInput)
 
         // set anti cheat
         localStorage.setItem('previousWord','')
@@ -33,7 +37,12 @@
         localStorage.setItem("avgTry",0);
         localStorage.setItem("nbTry",0);
 
-        // redirect to index.html
-        document.location = "/"
+        // send data to server
+        
+        $.post('/verifyLogin',{name:nameInput ,password:passwordInput},(data)=>{
+            document.location = '/redirect'
+        })
+        
+        
     })
 </script>
