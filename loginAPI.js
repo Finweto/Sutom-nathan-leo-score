@@ -4,7 +4,6 @@ const session = require('express-session')
 const app = express()
 const fs = require('fs')
 const os = require('os')
-const cors = require('cors')
 const port = 5000
 
 let redirect_uri
@@ -15,11 +14,12 @@ app.use(express.urlencoded({ extended: true }));
 
 // login
 app.get('/authorize', (req, res) => {
+    // get all openId params (in query)
     const client_id = req.query.client_id
     const scope = req.query.scope
     redirect_uri = req.query.redirect_uri
-    console.log(redirect_uri)
     const nounce = req.query.nounce
+
     // verify OPENID
     if ((client_id == 'Sutom-nathan-leo')
         && (scope == 'openid,profile')
@@ -32,17 +32,18 @@ app.get('/authorize', (req, res) => {
     }
 })
 
-// post login data, verify
+
+
+// POST login form data
 app.post('/verifyLogin', (req, res) => {
     let logins = JSON.parse(fs.readFileSync('./logins.json'))
     // verify
-    const randomCode = Math.floor(Math.random() * 100000)
     logins.users.forEach((user) => {
         
         if (user.login == req.body.name && user.password == req.body.password) {
 
             // correct login and password
-            
+            const randomCode = Math.floor(Math.random() * 100000)
             const res = { login: user.login, code: randomCode }
             console.log('good inputs')
             logins.code.push(res)
@@ -56,10 +57,8 @@ app.post('/verifyLogin', (req, res) => {
 })
 
 app.get('/redirect',(req,res)=>{
-    var randomCode = "XXXX"
     res.redirect(`${redirect_uri}?code=${randomCode}`)
 })
-
 
 app.listen(port, () => {
     console.log(`listening on http://localhost:${port}`)

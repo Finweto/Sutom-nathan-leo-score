@@ -6,10 +6,9 @@ const app = express()
 const port = process.env.PORT || 3000 
 const fs = require('fs')
 const os =require('os')
-const cors = require('cors')
 
 // add express-session
-//app.set('trust proxy', 1) // trust first proxy
+app.set('trust proxy', 1) // trust first proxy
 app.use(session({
   secret: 's3Cur3',
   name: 'sessionId',
@@ -22,14 +21,14 @@ app.use(session({
 }))
 
 
-app.get('/callback',(res,req)=>{
+app.get('/callback',(req,res)=>{
+  console.log('callback GET')
   console.log(req.session)
-  req.session['user'] = "couocu"
+  console.log(req.query)
   res.redirect('/')
 })
 
 // auto redirecting if not authentified
-/*
 app.use((req,res,next)=>{ 
   if(req.session && req.session.user){
     
@@ -40,7 +39,7 @@ app.use((req,res,next)=>{
     res.redirect('http://localhost:5000/authorize?client_id=Sutom-nathan-leo&scope=openid,profile&redirect_uri=http://localhost:3000/callback&nounce=XXXX')
   }
 })
-*/
+
 // use public files
 app.use(express.static(__dirname+'/public'));
 
@@ -48,7 +47,7 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname+'/public/index.html')
 })
 
-// send tab of wordsList to app
+// send word of the day to app
 app.get('/text', (req, res) => {
   path = "./data/liste_francais_utf8.txt"
   const words = fs.readFileSync(path,'utf8')

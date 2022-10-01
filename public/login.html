@@ -38,7 +38,6 @@
         localStorage.setItem("nbTry",0);
 
         // send data to server
-        
         $.post('/verifyLogin',{name:nameInput ,password:passwordInput},(data)=>{
             document.location = '/redirect'
         })
