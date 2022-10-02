@@ -7,31 +7,25 @@ const port = process.env.PORT || 3000
 const fs = require('fs')
 const os =require('os')
 
-// add express-session
-app.set('trust proxy', 1) // trust first proxy
 app.use(session({
-  secret: 's3Cur3',
-  name: 'sessionId',
+  resave: false,
   saveUninitialized:true,
-  resave:true,
-  cookie: { 
-    secure: false,
-    httpOnly: true
-  }
+secret: 'nathan-leo',
+name:'sessionId'
 }))
 
-
+// callback from loginAPI
 app.get('/callback',(req,res)=>{
   console.log(req.session)
-  console.log(req.query)
   res.redirect('/')
 })
 
 // auto redirecting if not authentified
+
 app.use((req,res,next)=>{ 
   if(req.session && req.session.user){
     
-      console.log(req.session.user)
+      console.log(req.session)
       next()
   }else{
     console.log('session does not exist -> redirecting to login')
@@ -39,11 +33,12 @@ app.use((req,res,next)=>{
   }
 })
 
+
 // use public files
 app.use(express.static(__dirname+'/public'));
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname+'/public/index.html')
+  res.sendFile(__dirname+'/public/index.html')
 })
 
 // send word of the day to app

@@ -12,7 +12,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-// login
+
+// add express-session
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+    resave: false,
+    saveUninitialized:true,
+  secret: 'nathan-leo',
+  name:'sessionId'
+}))
+
+
+// serving public login file
 app.get('/authorize', (req, res) => {
     // get all openId params (in query)
     const client_id = req.query.client_id
@@ -32,22 +43,28 @@ app.get('/authorize', (req, res) => {
     }
 })
 
-
-
 // POST login form data
 app.post('/verifyLogin', (req, res) => {
     let logins = JSON.parse(fs.readFileSync('./logins.json'))
+
     // verify name & password
     foundUser = logins.users.find(user =>
         (user.login == req.body.name && user.password == req.body.password))
 
     // correct name & password
     if (foundUser) {
+        console.log('good inputs')
+        // create Code
         const randomCode = Math.floor(Math.random() * 100000)
         const newUser_Code = { login: foundUser.login, code: randomCode }
-        console.log('good inputs')
-        logins.code.push(newUser_Code)
+
+        // granting User a session
+        req.session.user = foundUser.login
+        req.session.code = randomCode
+        console.log(req.session)
+
         // add new user & code to json file
+        logins.code.push(newUser_Code)
         fs.writeFileSync('./logins.json', JSON.stringify(logins))
 
         // redirection
