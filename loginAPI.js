@@ -37,27 +37,34 @@ app.get('/authorize', (req, res) => {
 // POST login form data
 app.post('/verifyLogin', (req, res) => {
     let logins = JSON.parse(fs.readFileSync('./logins.json'))
-    // verify
-    logins.users.forEach((user) => {
-        
-        if (user.login == req.body.name && user.password == req.body.password) {
+    // verify name & password
+    foundUser = logins.users.find(user =>
+        (user.login == req.body.name && user.password == req.body.password))
 
-            // correct login and password
-            const randomCode = Math.floor(Math.random() * 100000)
-            const res = { login: user.login, code: randomCode }
-            console.log('good inputs')
-            logins.code.push(res)
-        }
-    })
-    fs.writeFileSync('./logins.json', JSON.stringify(logins))
+    // correct name & password
+    if (foundUser) {
+        const randomCode = Math.floor(Math.random() * 100000)
+        const newUser_Code = { login: foundUser.login, code: randomCode }
+        console.log('good inputs')
+        logins.code.push(newUser_Code)
+        // add new user & code to json file
+        fs.writeFileSync('./logins.json', JSON.stringify(logins))
 
-    // redirection
-    console.log(`redirection to motus using ${redirect_uri}`)
-    res.send('ok')
+        // redirection
+        console.log(`redirection to motus using ${redirect_uri}`)
+        res.send(randomCode.toString())
+    }
+    // wrong name or password
+    else {
+        console.log('wrong inputs')
+        res.send()
+    }
 })
 
-app.get('/redirect',(req,res)=>{
-    res.redirect(`${redirect_uri}?code=${randomCode}`)
+app.get('/redirect', (req, res) => {
+    code = req.query.code
+    // redirect to main server with callback URL and this User code
+    res.redirect(`${redirect_uri}?code=${code}`)
 })
 
 app.listen(port, () => {
