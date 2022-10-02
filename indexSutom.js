@@ -22,7 +22,6 @@ app.use(session({
 
 
 app.get('/callback',(req,res)=>{
-  console.log('callback GET')
   console.log(req.session)
   console.log(req.query)
   res.redirect('/')
@@ -66,7 +65,7 @@ app.get('/text', (req, res) => {
 })
 
 
-
+// API to show current port
 app.get('/port', (req,res)=>{
   const ourOs = os.hostname()
   res.send(`MOTUS APP LISTENING ON ${ourOs} on ${port}`)
