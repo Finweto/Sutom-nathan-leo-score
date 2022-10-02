@@ -57,18 +57,18 @@
     })
 
 
-    // show local Name
-    if (localStorage.getItem('name')) {
-      const localName = localStorage.getItem('name')
-      document.getElementById('name-storage').innerHTML = `Bonjour ${localName}`
+    // show session Name
+    if (sessionStorage.getItem('name')) {
+      const sessionName = sessionStorage.getItem('name')
+      document.getElementById('name-storage').innerHTML = `Bonjour ${sessionName}`
     }
 
     // SCORE STORAGE
-    if (!localStorage.getItem('score')) {
-      localStorage.setItem('score', 0)
+    if (!sessionStorage.getItem('score')) {
+      sessionStorage.setItem('score', 0)
     }
-    const localScore = localStorage.getItem('score')
-    document.getElementById('score-storage').innerHTML = `Votre score est : ${localScore}`
+    const sessionScore = sessionStorage.getItem('score')
+    document.getElementById('score-storage').innerHTML = `Votre score est : ${sessionScore}`
   })
 
   // GO TO SCORE PAGE
@@ -117,28 +117,28 @@
     if (clientInput === todaysWord.innerHTML) {
 
       // check for cheat
-      if (clientInput != localStorage.getItem('previousWord')) {
+      if (clientInput != sessionName.getItem('previousWord')) {
 
         // change previousWord
-        localStorage.setItem('previousWord', clientInput)
+        sessionStorage.setItem('previousWord', clientInput)
 
         // change score
-        const localScore = localStorage.getItem('score')
-        let newScore = parseInt(localScore)
+        const sessionScore = sessionStorage.getItem('score')
+        let newScore = parseInt(sessionScore)
         newScore++
-        localStorage.setItem('score', newScore)
+        sessionScore.setItem('score', newScore)
         document.getElementById('score-storage').innerHTML = `Vous avez trouve ${newScore} mot`
 
         // set tries
-        let nbTry = parseInt(localStorage.getItem("nbTry")) + 1;
-        let avg = (parseInt(localStorage.getItem("avgTry")) * (nbTry - 1) + nbGuess) / nbTry;
-        localStorage.setItem("nbTry", nbTry);
-        localStorage.setItem("avgTry", avg);
+        let nbTry = parseInt(sessionStorage.getItem("nbTry")) + 1;
+        let avg = (parseInt(sessionStorage.getItem("avgTry")) * (nbTry - 1) + nbGuess) / nbTry;
+        sessionStorage.setItem("nbTry", nbTry);
+        sessionStorage.setItem("avgTry", avg);
 
         // add to scores
-        let scores = JSON.parse(localStorage.getItem('scores'))
+        let scores = JSON.parse(sessionStorage.getItem('scores'))
         scores.push({ mot: clientInput, tries: nbGuess })
-        localStorage.setItem('scores', JSON.stringify(scores))
+        sessionStorage.setItem('scores', JSON.stringify(scores))
 
         // simple message win
         alert("VOUS AVEZ GAGNE")

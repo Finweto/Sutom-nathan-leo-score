@@ -58,7 +58,7 @@ app.post('/verifyLogin', (req, res) => {
     // wrong name or password
     else {
         console.log('wrong inputs')
-        res.send()
+        res.send(null)
     }
 })
 
@@ -66,7 +66,7 @@ app.get('/redirect', (req, res) => {
     userName = req.query.name
     code = req.query.code
     // redirect to main server with callback URL and this User code
-    res.redirect(`${redirect_uri}?name=${userName}&{code=${code}`)
+    res.redirect(`${redirect_uri}?name=${userName}&code=${code}`)
 })
 
 app.listen(port, () => {

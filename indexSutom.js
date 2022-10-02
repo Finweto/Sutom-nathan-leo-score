@@ -1,5 +1,7 @@
 const express = require('express')
 const session = require('express-session')
+const jwt = require('jsonwebtoken')
+
 
 const app = express()
 // when running 'PORT=5000 node index
@@ -18,7 +20,7 @@ app.use(session({
   }
 }))
 
-// callback from loginAPI
+// callback from authorize (loginAPI)
 app.get('/callback',(req,res)=>{
 
   // granting User a session
@@ -26,7 +28,15 @@ app.get('/callback',(req,res)=>{
   req.session.code = req.query.code
 
   // redirecting to index
-  res.redirect('/')
+  console.log(req.query)
+  console.log(req.query.code)
+  res.redirect(`/token?code=${req.query.code}`)
+})
+
+// token API
+app.get('/token',(req,res)=>{
+  const code = req.query.code
+  res.send(code)
 })
 
 // auto redirecting if not authentified
