@@ -20,13 +20,16 @@ app.use(session({
   }
 }))
 
-// callback from authorize (loginAPI)
+// REDIRECT_URI from authorize (loginAPI)
 app.get('/callback',(req,res)=>{
-  // getting code from loginAPI
+  // getting code from loginAPI & creating a session for user
   req.session.code = req.query.code
+  req.session.name = req.query.name
 
-  // redirecting to index
-  res.redirect(`/token?code=${req.query.code}`)
+  /* // redirecting to /token
+  res.redirect(`/token?code=${req.query.code}`)*/
+  // redirecting to /index
+  res.redirect('/')
 })
 
 // token API
