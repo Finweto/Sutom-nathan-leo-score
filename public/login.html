@@ -14,9 +14,9 @@ Entrez votre Name et votre mot de Passe
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
 <script type="module">
-    // async function to set LocalStorage
+    // async function to set sessionStorage
     async function setSessionStorage(nameInput) {
-        // set localStorage item
+        // set name item
         sessionStorage.setItem('name', nameInput)
 
         // set anti cheat
@@ -26,8 +26,8 @@ Entrez votre Name et votre mot de Passe
         sessionStorage.setItem('scores', JSON.stringify([]))
 
         // set Tries
-        sessionStorage.setItem("avgTry", 0)
-        sessionStorage.setItem("nbTry", 0)
+        sessionStorage.setItem('avgTry', 0)
+        sessionStorage.setItem('nbTry', 0)
         
         console.log('finished setting sessionStorage')
         return 0
@@ -44,8 +44,6 @@ Entrez votre Name et votre mot de Passe
         // show wrong name or password or redirect with code
         $.post('/verifyLogin', { name: nameInput, password: passwordInput }, async (data) => {
             if (data) {
-                console.log('oui')
-                // await set localStorage
                 await setSessionStorage(nameInput)
 
                 console.log('redirection to main')
