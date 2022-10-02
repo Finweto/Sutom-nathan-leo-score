@@ -42,18 +42,19 @@ app.get('/token',(req,res)=>{
 // auto redirecting if not authentified
 app.use((req,res,next)=>{ 
   if(req.session && req.session.name){
-
-      next()
+    // continue executing other script in this file ** 
+    next()
   }else{
     console.log('session does not exist -> redirecting to login')
     res.redirect('http://localhost:5000/authorize?client_id=Sutom-nathan-leo&scope=openid,profile&redirect_uri=http://localhost:3000/callback&nounce=XXXX')
   }
 })
 
-
+// ** like this
 // use public files
 app.use(express.static(__dirname+'/public'));
 
+// send public index file
 app.get('/', (req, res) => {
   res.sendFile(__dirname+'/public/index.html')
 })
@@ -71,11 +72,9 @@ app.get('/text', (req, res) => {
   // choose word of the day
   const index = seed % tabOfWords.length * 599
   const todaysWord = tabOfWords[index]
-  
 
   res.json({todaysWord})
 })
-
 
 // API to show current port
 app.get('/port', (req,res)=>{
@@ -88,6 +87,7 @@ app.get('/score', (req,res)=>{
   res.send('/score.html')
 })
 
+// show simple message to server terminal
 app.listen(port, () => {
   console.log(`listening on http://localhost:${port}`)
 })
