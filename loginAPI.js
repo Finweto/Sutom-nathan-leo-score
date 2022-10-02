@@ -11,18 +11,6 @@ let redirect_uri
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-
-// add express-session
-app.set('trust proxy', 1) // trust first proxy
-app.use(session({
-    resave: false,
-    saveUninitialized:true,
-  secret: 'nathan-leo',
-  name:'sessionId'
-}))
-
-
 // serving public login file
 app.get('/authorize', (req, res) => {
     // get all openId params (in query)
@@ -58,18 +46,14 @@ app.post('/verifyLogin', (req, res) => {
         const randomCode = Math.floor(Math.random() * 100000)
         const newUser_Code = { login: foundUser.login, code: randomCode }
 
-        // granting User a session
-        req.session.user = foundUser.login
-        req.session.code = randomCode
-        console.log(req.session)
-
         // add new user & code to json file
         logins.code.push(newUser_Code)
         fs.writeFileSync('./logins.json', JSON.stringify(logins))
 
         // redirection
         console.log(`redirection to motus using ${redirect_uri}`)
-        res.send(randomCode.toString())
+        data = {name:foundUser.login,code:randomCode.toString(),}
+        res.send(data)
     }
     // wrong name or password
     else {
@@ -79,9 +63,10 @@ app.post('/verifyLogin', (req, res) => {
 })
 
 app.get('/redirect', (req, res) => {
+    userName = req.query.name
     code = req.query.code
     // redirect to main server with callback URL and this User code
-    res.redirect(`${redirect_uri}?code=${code}`)
+    res.redirect(`${redirect_uri}?name=${userName}&{code=${code}`)
 })
 
 app.listen(port, () => {

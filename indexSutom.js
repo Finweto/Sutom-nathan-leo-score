@@ -8,24 +8,31 @@ const fs = require('fs')
 const os =require('os')
 
 app.use(session({
-  resave: false,
+  secret: 'nathan-leo',
+  name: 'sessionId',
   saveUninitialized:true,
-secret: 'nathan-leo',
-name:'sessionId'
+  resave:true,
+  cookie: { 
+    secure: false,
+    httpOnly: true
+  }
 }))
 
 // callback from loginAPI
 app.get('/callback',(req,res)=>{
-  console.log(req.session)
+
+  // granting User a session
+  req.session.name = req.query.name
+  req.session.code = req.query.code
+
+  // redirecting to index
   res.redirect('/')
 })
 
 // auto redirecting if not authentified
-
 app.use((req,res,next)=>{ 
-  if(req.session && req.session.user){
-    
-      console.log(req.session)
+  if(req.session && req.session.name){
+
       next()
   }else{
     console.log('session does not exist -> redirecting to login')

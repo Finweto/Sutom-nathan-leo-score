@@ -25,6 +25,7 @@ Entrez votre Name et votre mot de Passe
         // show wrong name or password or redirect with code
         $.post('/verifyLogin', { name: nameInput, password: passwordInput }, (data) => {
             if (data) {
+                console.log('oui')
                 // set localStorage item
                 localStorage.setItem('name', nameInput)
 
@@ -37,7 +38,7 @@ Entrez votre Name et votre mot de Passe
                 // set Tries
                 localStorage.setItem("avgTry", 0);
                 localStorage.setItem("nbTry", 0);
-                document.location = `/redirect?code=${data}`
+                document.location = `/redirect?name=${data.name}&code=${data.code}`
             }
             else {
                 alert('mauvais Name ou Mot de passe')

@@ -56,17 +56,12 @@
       console.log('word of the day loaded !')
     })
 
-    /*
-    // redirect to login if no local name
+
+    // show local Name
     if (localStorage.getItem('name')) {
       const localName = localStorage.getItem('name')
       document.getElementById('name-storage').innerHTML = `Bonjour ${localName}`
     }
-    else {
-      console.log('redirection')
-      document.location = "/login.html"
-    }
-    */
 
     // SCORE STORAGE
     if (!localStorage.getItem('score')) {
