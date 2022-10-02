@@ -3,7 +3,6 @@ const session = require('express-session')
 
 const app = express()
 const fs = require('fs')
-const os = require('os')
 const port = 5000
 
 let redirect_uri
@@ -19,15 +18,18 @@ app.get('/authorize', (req, res) => {
     redirect_uri = req.query.redirect_uri
     const nounce = req.query.nounce
 
-    // verify OPENID
+    // verify authorize URL
     if ((client_id == 'Sutom-nathan-leo')
         && (scope == 'openid,profile')
         && (redirect_uri == 'http://localhost:3000/callback')
         && (nounce == 'XXXX')) {
+
         console.log('OPENID SUCCESS')
+        // display login form
         res.sendFile(__dirname + '/public/login.html')
     } else {
         console.log('OPENID FAIL')
+        res.send('wrong clientid => error')
     }
 })
 
@@ -44,10 +46,19 @@ app.post('/verifyLogin', (req, res) => {
         console.log('good inputs')
         // create Code
         const randomCode = Math.floor(Math.random() * 100000)
-        const newUser_Code = { login: foundUser.login, code: randomCode }
 
-        // add new user & code to json file
-        logins.code.push(newUser_Code)
+        // verify if login already exist
+        foundCode = logins.codes.find(user => user.login == foundUser.login)
+        if(foundCode){
+            // only change the code
+            foundCode.code = randomCode
+        }
+        else {
+            // add new user & code to json file
+            const newUser_Code = { login: foundUser.login, code: randomCode }
+            logins.codes.push(newUser_Code)
+        }
+        // change logins.json file
         fs.writeFileSync('./logins.json', JSON.stringify(logins))
 
         // redirection
