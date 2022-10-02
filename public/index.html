@@ -18,6 +18,9 @@
   <form id="goToScore" type="submit">
     <input type="submit" value="Click to see your score">
   </form>
+  <form id="logOut" type="submit">
+    <input type="submit" value="Click to log out">
+  </form>
 </body>
 
 </html>
@@ -155,4 +158,9 @@
 
   })
 
+  document.getElementById("logOut").addEventListener("submit", function (event) {
+    event.preventDefault()
+
+    $.get('/logOut')
+  })
 </script>
