@@ -1,6 +1,6 @@
 const express = require('express')
 const session = require('express-session')
-// const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 
 
 const app = express()
@@ -22,21 +22,21 @@ app.use(session({
 
 // callback from authorize (loginAPI)
 app.get('/callback',(req,res)=>{
-
-  // granting User a session
-  req.session.name = req.query.name
+  // getting code from loginAPI
   req.session.code = req.query.code
 
   // redirecting to index
-  console.log(req.query)
-  console.log(req.query.code)
   res.redirect(`/token?code=${req.query.code}`)
 })
 
 // token API
 app.get('/token',(req,res)=>{
+  // taking code from url params
   const code = req.query.code
-  res.send(code)
+
+  // creatin token with key nathan-leo
+  const token = jwt.sign(code, 'nathan-leo')
+  res.send(token)
 })
 
 // auto redirecting if not authentified
