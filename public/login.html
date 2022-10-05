@@ -1,48 +1,58 @@
-<link rel="stylesheet" type="text/css" href="/css/style.css"/>
+<link rel="stylesheet" type="text/css" href="/css/style.css" />
 
 <html>
-    Bonjour vous êtes dans le login</br>
-    Entrez votre Name et votre mot de Passe
-    <form id="login-form" action='post'>
-        <input id="inputName" type="text" name="clientName" >
-        <input id="inputPassword" type="password" name="clientPassword" >
-        <input type="submit" value="Submit Name">
-    </form>
+Bonjour vous êtes dans le login</br>
+Entrez votre Name et votre mot de Passe
+<form id="login-form" action='post'>
+    <input id="inputName" type="text" name="clientName">
+    <input id="inputPassword" type="password" name="clientPassword">
+    <input type="submit" value="Submit Name">
+</form>
+
 </html>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
 <script type="module">
+    // async function to set sessionStorage
+    async function setSessionStorage(nameInput) {
+        // set name item
+        sessionStorage.setItem('name', nameInput)
+
+        // set anti cheat
+        sessionStorage.setItem('previousWord', '')
+
+        // set score obj
+        sessionStorage.setItem('scores', JSON.stringify([]))
+
+        // set Tries
+        sessionStorage.setItem('avgTry', 0)
+        sessionStorage.setItem('nbTry', 0)
+        
+        console.log('finished setting sessionStorage')
+        return 0
+    }
+    
     document.getElementById("login-form").addEventListener("submit", function (event) {
         // prevent change of page on submit 
         event.preventDefault()
         
-        
         // get client input
         const nameInput = event.target[0].value
         const passwordInput = event.target[1].value
-        
 
-        // set localStorage item
-        localStorage.setItem('name',nameInput)
+        // show wrong name or password or redirect with code
+        $.post('/verifyLogin', { name: nameInput, password: passwordInput }, async (data) => {
+            if (data) {
+                await setSessionStorage(nameInput)
 
-        // set anti cheat
-        localStorage.setItem('previousWord','')
-
-        // set score obj
-        localStorage.setItem('scores',JSON.stringify([]))
-        
-
-        // set Tries
-        localStorage.setItem("avgTry",0);
-        localStorage.setItem("nbTry",0);
-
-        // send data to server
-        
-        $.post('/verifyLogin',{name:nameInput ,password:passwordInput},(data)=>{
-            document.location = '/redirect'
+                console.log('redirection to main')
+                document.location = `/redirect?name=${data.name}&code=${data.code}`
+            }
+            else {
+                alert('mauvais Name ou Mot de passe')
+            }
         })
-        
-        
+
     })
 </script>
