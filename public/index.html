@@ -75,12 +75,12 @@
     document.getElementById('score-storage').innerHTML = `Votre score est : ${sessionScore}`
   })
 
-  // GO TO SCORE PAGE
+  // GO TO SCORE
   document.getElementById("goToScore").addEventListener("submit", function (event) {
     event.preventDefault()
-    console.log('redirection vers page score')
+    console.log('redirection vers score micro service')
 
-    document.location = '/score.html'
+    document.location = 'http://localhost:3000/score'
   })
 
   // FEATURES OF MOTUS
