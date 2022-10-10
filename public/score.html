@@ -1,8 +1,11 @@
+<!--
 <link rel="stylesheet" type="text/css" href="/css/style.css" />
-
+-->
 
 <html>
-
+<head>
+    <meta charset="UTF-8">
+</head>
 <body>
     <table>
         <thead>
@@ -16,7 +19,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr id="scores">
+            <tr id="score">
                 <td id="mot">
 
                 </td>
@@ -33,20 +36,36 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
 <script>
+    // our score page is build of a table containing each scores
+    // the user can see each word he guessed and the score he has
+    // for each word guessed
+    // we can add some other infos if we want (mean score, average nb of tries...)
+
+    // ON LOAD
     $(document).ready(function () {
-        const scores = JSON.parse(localStorage.getItem('scores'))
-        const row = document.getElementById('scores')
-        console.log(row.childNodes[1])
+        // get the users data
+        $.get('/scores', (scores) => {
+            const row = document.getElementById('score')
 
-        scores.forEach((elem, i) => {
-            const newRow = row.cloneNode(true)
-            let tdmot = newRow.childNodes[1]
-            let tdtry = newRow.childNodes[3]
-            tdmot.innerHTML = elem.mot
-            tdtry.innerHTML = elem.tries
+            if (scores) {
+                // for each user's word
+                scores.forEach((score, i) => {
+                    // create a new row
+                    const newRow = row.cloneNode(true)
+                    // assign user's data for this word
+                    let tdmot = newRow.childNodes[1]
+                    let tdtry = newRow.childNodes[3]
+                    tdmot.innerHTML = score.mot
+                    tdtry.innerHTML = score.nbEssais
 
-            row.before(newRow)
+                    // place this row in html file
+                    row.before(newRow)
+                })
+            } else {
+                // case if no user's word
+                alert("Vous n'avez pas encore trouve de mots 😓")
+            }
+            
         })
-
     })
 </script>
