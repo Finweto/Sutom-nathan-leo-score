@@ -1,7 +1,7 @@
 const express = require('express')
 const session = require('express-session')
 const jwt = require('jsonwebtoken')
-
+const request = require('request')
 const app = express()
 // when running 'PORT=5000 node index
 const port = process.env.PORT || 3000 
@@ -24,25 +24,17 @@ app.use(session({
 // REDIRECT_URI from authorize (loginAPI)
 app.get('/callback',(req,res)=>{
   // getting code from loginAPI & creating a session for user
+  
+  request('http://localhost:5000/token',(req,res) =>{
+    console.log();
+  });
   req.session.code = req.query.code
   req.session.name = req.query.name
   
-  axios.get('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY')
-  .then(response => {
-    console.log(response.data.url);
-    console.log(response.data.explanation);
-  })
-  .catch(error => {
-    console.log(error);
-  });
-   // redirecting to /token
-  res.redirect(`/token?code=${req.query.code}`)
-
   // redirecting to /index
   //res.redirect('/')
 })
 
-// token API
 
 
 // auto redirecting if not authentified

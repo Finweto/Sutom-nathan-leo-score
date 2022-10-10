@@ -87,7 +87,7 @@ app.get('/token',(req,res)=>{
     console.log("arrivé token")
     // taking code from url params
     const code = req.query.code
-  
+    
     // creatin token with key nathan-leo
     const token = jwt.sign(code, 'nathan-leo')
     res.send(token)
