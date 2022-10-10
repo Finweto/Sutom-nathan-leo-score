@@ -7,6 +7,9 @@ const port = 5001
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// use public files (img, css) withoug triggering index distribution
+app.use(express.static('public',{index:false}))
+
 // serving public score file
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/score.html')
@@ -20,7 +23,7 @@ app.get('/scores', (req,res)=> {
 
     // simple solution for test
     scores = [{mot:'oui',nbEssais:5},{mot:'non',nbEssais:9}]
-    
+
     res.json(scores)
 })
 
