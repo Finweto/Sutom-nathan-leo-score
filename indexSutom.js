@@ -37,10 +37,12 @@ app.get('/token',(req,res)=>{
   // taking code from url params
   const code = req.query.code
 
+
   // creatin token with key nathan-leo
   const token = jwt.sign(code, 'nathan-leo')
   res.send(token)
 })
+
 
 // auto redirecting if not authentified
 app.use((req,res,next)=>{ 
