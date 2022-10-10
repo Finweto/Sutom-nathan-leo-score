@@ -1,13 +1,23 @@
 <link rel="stylesheet" type="text/css" href="/css/style.css" />
 
 <html>
-Bonjour vous êtes dans le login</br>
-Entrez votre Name et votre mot de Passe
-<form id="login-form" action='post'>
-    <input id="inputName" type="text" name="clientName">
-    <input id="inputPassword" type="password" name="clientPassword">
-    <input type="submit" value="Submit Name">
-</form>
+
+<body>
+    <header>
+        <h1>Projet Microservices</h1>
+        <h1>Nathan Oliveira Da Silva - Léo Bernard</h2>
+    </header>
+    <div class="main-content">
+        <h1>Bonjour, veuillez renseigner votre login et mot de passe</h1>
+        <form id="login-form" action='post'>
+            <label for="clientName">Login</label>
+            <input id="inputName" type="text" name="clientName">
+            <label for="clientPassword">Password</label>
+            <input id="inputPassword" type="password" name="clientPassword">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</body>
 
 </html>
 
@@ -28,15 +38,15 @@ Entrez votre Name et votre mot de Passe
         // set Tries
         sessionStorage.setItem('avgTry', 0)
         sessionStorage.setItem('nbTry', 0)
-        
+
         console.log('finished setting sessionStorage')
         return 0
     }
-    
+
     document.getElementById("login-form").addEventListener("submit", function (event) {
         // prevent change of page on submit 
         event.preventDefault()
-        
+
         // get client input
         const nameInput = event.target[0].value
         const passwordInput = event.target[1].value

@@ -1,13 +1,41 @@
-body {
-    background-color:aquamarine;
-    background-size:     cover;                      
-    background-repeat:   no-repeat;
-    background-position: center center; 
+html {
     text-align: center;
+    font-family: 'Lucida Grande', 'Calibri', Helvetica, Arial, sans-serif;
+    letter-spacing: -1px;
+    line-height: 1.5;
 }
 
-.tables{
-    padding-left: 45%;
-    padding-right: 45%;
+
+body {
+    height: 100%;
+    margin:auto;
+    background: #f2f2f2;
+    color: #222222;
 }
 
+header {
+    font-weight: bold;
+    padding: 0 0px 0 0;
+    color: white;
+    text-shadow: rgb(0, 0, 0) 0px 0px 10px;
+    background: linear-gradient(to top, #373737, #212121);
+    border-top: 1px solid #111;
+    border-bottom: 1px solid #111;
+}
+
+.main-content {
+    padding-top: 50px;
+    margin-left: 30%;
+    margin-right: 30%;
+}
+
+table {
+    color: inherit;
+    margin-right: auto;
+    margin-left: auto;
+    font-size: x-large;
+}
+
+form {
+    padding:5px;
+}

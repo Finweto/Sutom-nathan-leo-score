@@ -3,24 +3,31 @@
 <link rel="stylesheet" type="text/css" href="/css/style.css" />
 
 <body>
-  <h1 id="name-storage"></h1>
-  <h2 id="score-storage"></h2>
-  <h1 id="todaysWordLength"></h1>
-  <form id="sutom-form" action='post'>
-    <input id="inputClient" type="text" name="clientWord">
-    <input type="submit" value="Submit">
-  </form>
-  <span hidden id="word-of-the-day"></span>
-  <div class="tables">
-    <table id="foundWord"></table>
-  </div>
+  <header>
+    <h1>Projet Microservices</h1>
+    <h1>Nathan Oliveira Da Silva - Léo Bernard</h2>
+  </header>
+  <div class="main-content">
+    <h1 id="name-storage"></h1>
+    <h2 id="score-storage"></h2>
+    <h1 id="todaysWordLength"></h1>
+    <form id="sutom-form" action='post'>
+      <input id="inputClient" type="text" name="clientWord">
+      <input type="submit" value="Submit">
+    </form>
+    <span hidden id="word-of-the-day"></span>
+    <div class="tables">
+      <table id="foundWord"></table>
+    </div>
 
-  <form id="goToScore" type="submit">
-    <input type="submit" value="Click to see your score">
-  </form>
-  <form id="logOut" type="submit">
-    <input type="submit" value="Click to log out">
-  </form>
+    <form id="goToScore" type="submit">
+      <input type="submit" value="Click to see your score">
+    </form>
+    <form id="logOut" type="submit">
+      <input type="submit" value="Click to log out">
+    </form>
+  </div>
+  </body>
 </body>
 
 </html>
