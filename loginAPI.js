@@ -10,6 +10,9 @@ let redirect_uri
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// use public files (img, css) withoug triggering index distribution
+app.use(express.static('public',{index:false}))
+
 // serving public login file
 app.get('/authorize', (req, res) => {
     // get all openId params (in query)
