@@ -2,12 +2,13 @@ const express = require('express')
 const session = require('express-session')
 const jwt = require('jsonwebtoken')
 
-
 const app = express()
 // when running 'PORT=5000 node index
 const port = process.env.PORT || 3000 
 const fs = require('fs')
 const os =require('os')
+
+
 
 app.use(session({
   secret: 'nathan-leo',
@@ -25,22 +26,24 @@ app.get('/callback',(req,res)=>{
   // getting code from loginAPI & creating a session for user
   req.session.code = req.query.code
   req.session.name = req.query.name
+  
+  axios.get('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY')
+  .then(response => {
+    console.log(response.data.url);
+    console.log(response.data.explanation);
+  })
+  .catch(error => {
+    console.log(error);
+  });
+   // redirecting to /token
+  res.redirect(`/token?code=${req.query.code}`)
 
-  /* // redirecting to /token
-  res.redirect(`/token?code=${req.query.code}`)*/
   // redirecting to /index
-  res.redirect('/')
+  //res.redirect('/')
 })
 
 // token API
-app.get('/token',(req,res)=>{
-  // taking code from url params
-  const code = req.query.code
 
-  // creatin token with key nathan-leo
-  const token = jwt.sign(code, 'nathan-leo')
-  res.send(token)
-})
 
 // auto redirecting if not authentified
 app.use((req,res,next)=>{ 
@@ -94,4 +97,3 @@ app.get('/score', (req,res)=>{
 app.listen(port, () => {
   console.log(`listening on http://localhost:${port}`)
 })
-

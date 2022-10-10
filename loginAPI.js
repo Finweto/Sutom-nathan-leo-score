@@ -4,6 +4,7 @@ const session = require('express-session')
 const app = express()
 const fs = require('fs')
 const port = 5000
+const jwt = require('jsonwebtoken')
 
 let redirect_uri
 // make req.body from POST usefull
@@ -79,6 +80,18 @@ app.get('/redirect', (req, res) => {
     // redirect to main server with callback URL and this User code
     res.redirect(`${redirect_uri}?name=${userName}&code=${code}`)
 })
+
+// token API
+app.get('/token',(req,res)=>{
+   
+    console.log("arrivé token")
+    // taking code from url params
+    const code = req.query.code
+  
+    // creatin token with key nathan-leo
+    const token = jwt.sign(code, 'nathan-leo')
+    res.send(token)
+  })
 
 app.listen(port, () => {
     console.log(`listening on http://localhost:${port}`)
