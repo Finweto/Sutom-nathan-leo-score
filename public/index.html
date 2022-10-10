@@ -6,10 +6,7 @@
   <h1 id="name-storage"></h1>
   <h2 id="score-storage"></h2>
   <h1 id="todaysWordLength"></h1>
-  <form id="loading" type="submit">
-    <input id="word-of-the-day-button" type="submit" value="Click to load word of the day !">
-  </form>
-  <form id="sutom-form" action='post' hidden>
+  <form id="sutom-form" action='post'>
     <input id="inputClient" type="text" name="clientWord">
     <input type="submit" value="Submit">
   </form>
@@ -20,6 +17,9 @@
 
   <form id="goToScore" type="submit">
     <input type="submit" value="Click to see your score">
+  </form>
+  <form id="logOut" type="submit">
+    <input type="submit" value="Click to log out">
   </form>
 </body>
 
@@ -33,49 +33,15 @@
 
   // ON LOAD
   $(document).ready(function () {
-    // redirect to login if no local name
-    if (localStorage.getItem('name')) {
-      console.log(localStorage.getItem('name'))
-      const localName = localStorage.getItem('name')
-      document.getElementById('name-storage').innerHTML = `Vous avez trouve ${localName} mot`
-    }
-    else {
-      console.log('redirection')
-      document.location = "/login.html"
-    }
 
-    // SCORE STORAGE
-    if (!localStorage.getItem('score')) {
-      localStorage.setItem('score', 0)
-    }
-    const localScore = localStorage.getItem('score')
-    document.getElementById('score-storage').innerHTML = `Votre score est : ${localScore}`
-  })
-
-  // GO TO SCORE PAGE
-  document.getElementById("goToScore").addEventListener("submit", function (event) {
-    event.preventDefault()
-    console.log('redirection vers page score')
-
-    document.location = '/score.html'
-  })
-
-  // LOADING OF TODAY'S WORD
-  document.getElementById("loading").addEventListener("submit", function (event) {
-    // prevent change of page on submit 
-    event.preventDefault()
-
-    // get tab of word list
+    // LOADING OF TODAY'S WORD
     $.get('/text', (data) => {
-      const tabOfWords = data.tabOfWords
 
-      // get seed of the day
-      const date = new Date()
-      const seed = date.getDay()
+      // get word of the day
+      const todaysWord = data.todaysWord
+      console.log(todaysWord)
 
-      // choose word of the day
-      const index = seed % tabOfWords.length * 599
-      const todaysWord = tabOfWords[index]
+      // change hidden value to know word of the day for devs
       document.getElementById("word-of-the-day").innerHTML = todaysWord
 
       // fill table foundWord with unknown values to show length
@@ -89,12 +55,32 @@
       // change attribute of forms
       document.getElementById("inputClient").setAttribute("maxlength", todaysWord.length)
       document.getElementById("inputClient").setAttribute("minlength", todaysWord.length)
-      document.getElementById("loading").hidden = true;
-      document.getElementById("sutom-form").hidden = false;
 
       // notify today's word is loaded
       console.log('word of the day loaded !')
     })
+
+
+    // show session Name
+    if (sessionStorage.getItem('name')) {
+      const sessionName = sessionStorage.getItem('name')
+      document.getElementById('name-storage').innerHTML = `Bonjour ${sessionName}`
+    }
+
+    // SCORE STORAGE
+    if (!sessionStorage.getItem('score')) {
+      sessionStorage.setItem('score', 0)
+    }
+    const sessionScore = sessionStorage.getItem('score')
+    document.getElementById('score-storage').innerHTML = `Votre score est : ${sessionScore}`
+  })
+
+  // GO TO SCORE PAGE
+  document.getElementById("goToScore").addEventListener("submit", function (event) {
+    event.preventDefault()
+    console.log('redirection vers page score')
+
+    document.location = '/score.html'
   })
 
   // FEATURES OF MOTUS
@@ -129,42 +115,42 @@
         // wrong
         $(`#${index}`)[0].style.color = "black"
       }
-    });
+    })
 
     // check for win 
     if (clientInput === todaysWord.innerHTML) {
 
       // check for cheat
-      if (clientInput != localStorage.getItem('previousWord')) {
+      if (clientInput != sessionName.getItem('previousWord')) {
 
         // change previousWord
-        localStorage.setItem('previousWord', clientInput)
+        sessionStorage.setItem('previousWord', clientInput)
 
         // change score
-        const localScore = localStorage.getItem('score')
-        let newScore = parseInt(localScore)
+        const sessionScore = sessionStorage.getItem('score')
+        let newScore = parseInt(sessionScore)
         newScore++
-        localStorage.setItem('score', newScore)
+        sessionScore.setItem('score', newScore)
         document.getElementById('score-storage').innerHTML = `Vous avez trouve ${newScore} mot`
 
-        
-
         // set tries
-        let nbTry = parseInt(localStorage.getItem("nbTry")) + 1;
-        let avg = (parseInt(localStorage.getItem("avgTry")) * (nbTry - 1) + nbGuess) / nbTry;
-        localStorage.setItem("nbTry", nbTry);
-        localStorage.setItem("avgTry", avg);
+        let nbTry = parseInt(sessionStorage.getItem("nbTry")) + 1;
+        let avg = (parseInt(sessionStorage.getItem("avgTry")) * (nbTry - 1) + nbGuess) / nbTry;
+        sessionStorage.setItem("nbTry", nbTry);
+        sessionStorage.setItem("avgTry", avg);
 
         // add to scores
-        let scores = JSON.parse(localStorage.getItem('scores'))
-        scores.push({ mot: clientInput,tries:nbGuess})
-        localStorage.setItem('scores',JSON.stringify(scores))
+        let scores = JSON.parse(sessionStorage.getItem('scores'))
+        scores.push({ mot: clientInput, tries: nbGuess })
+        sessionStorage.setItem('scores', JSON.stringify(scores))
+
         // simple message win
         alert("VOUS AVEZ GAGNE")
       }
 
       else {
-        alert("Vous essayez de tricher lo")
+        // user is trying to guess the same word again to gain score
+        alert("Vous avez déjà trouvé ce mot")
       }
 
     } else {
@@ -173,4 +159,9 @@
 
   })
 
+  document.getElementById("logOut").addEventListener("submit", function (event) {
+    event.preventDefault()
+
+    $.get('/logOut')
+  })
 </script>
