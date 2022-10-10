@@ -42,9 +42,8 @@ app.get('/callback',(req,res)=>{
   //res.redirect('/')
 })
 
-
-
 // auto redirecting if not authentified
+/*
 app.use((req,res,next)=>{ 
   if(req.session && req.session.name){
     // continue executing other script in this file ** 
@@ -54,7 +53,7 @@ app.use((req,res,next)=>{
     res.redirect('http://localhost:5000/authorize?client_id=Sutom-nathan-leo&scope=openid,profile&redirect_uri=http://localhost:3000/callback&nounce=XXXX')
   }
 })
-
+*/
 // ** like this
 // use public files
 app.use(express.static(__dirname+'/public'));
@@ -89,7 +88,7 @@ app.get('/port', (req,res)=>{
 
 // score
 app.get('/score', (req,res)=>{
-  res.send('/score.html')
+  res.redirect('http://localhost:5001/') 
 })
 
 // show simple message to server terminal
