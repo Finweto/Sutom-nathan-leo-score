@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // use public files (img, css) withoug triggering index distribution
-app.use(express.static('public',{index:false}))
+app.use(express.static('public', { index: false }))
 
 // serving public login file
 app.get('/authorize', (req, res) => {
@@ -52,7 +52,7 @@ app.post('/verifyLogin', (req, res) => {
 
         // verify if login already exist
         foundCode = logins.codes.find(user => user.login == foundUser.login)
-        if(foundCode){
+        if (foundCode) {
             // only change the code
             foundCode.code = randomCode
         }
@@ -66,13 +66,39 @@ app.post('/verifyLogin', (req, res) => {
 
         // redirection
         console.log(`redirection to motus using ${redirect_uri}`)
-        data = {name:foundUser.login,code:randomCode.toString(),}
+        data = { name: foundUser.login, code: randomCode.toString(), }
         res.send(data)
     }
     // wrong name or password
     else {
         console.log('wrong inputs')
         res.send(null)
+    }
+})
+
+// POST register form data
+app.post('/verifyRegister', (req, res) => {
+    let logins = JSON.parse(fs.readFileSync('./logins.json'))
+
+    // verify if name & password already taken
+    foundUser = logins.users.find(user =>
+        (user.login == req.body.name))
+
+    // credential already taken
+    if (foundUser) {
+        console.log('input already taken')
+        res.send(null)
+    }
+    // add new user & code to json file
+    else {
+        const newUser = { login: req.body.name, password: req.body.password }
+        logins.users.push(newUser)
+
+        // change logins.json file
+        fs.writeFileSync('./logins.json', JSON.stringify(logins))
+
+        // redirection
+        res.send('ok')
     }
 })
 
@@ -84,16 +110,16 @@ app.get('/redirect', (req, res) => {
 })
 
 // token API
-app.get('/token',(req,res)=>{
-   
+app.get('/token', (req, res) => {
+
     console.log("arrivé token")
     // taking code from url params
     const code = req.query.code
-  
+
     // creatin token with key nathan-leo
     const token = jwt.sign(code, 'nathan-leo')
     res.send(token)
-  })
+})
 
 app.listen(port, () => {
     console.log(`listening on http://localhost:${port}`)
