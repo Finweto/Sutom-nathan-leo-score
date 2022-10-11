@@ -46,7 +46,6 @@
 
       // get word of the day
       const todaysWord = data.todaysWord
-      console.log(todaysWord)
 
       // change hidden value to know word of the day for devs
       document.getElementById("word-of-the-day").innerHTML = todaysWord
@@ -67,13 +66,13 @@
       console.log('word of the day loaded !')
     })
 
-
+    /*
     // show session Name
     if (sessionStorage.getItem('name')) {
       const sessionName = sessionStorage.getItem('name')
       document.getElementById('name-storage').innerHTML = `Bonjour ${sessionName}`
     }
-
+    */
     // SCORE STORAGE
     if (!sessionStorage.getItem('score')) {
       sessionStorage.setItem('score', 0)
@@ -126,10 +125,10 @@
 
     // check for win 
     if (clientInput === todaysWord.innerHTML) {
-
+      console.log('mot trouve')
       // check for cheat
       if (clientInput != sessionName.getItem('previousWord')) {
-
+        
         // change previousWord
         sessionStorage.setItem('previousWord', clientInput)
 
