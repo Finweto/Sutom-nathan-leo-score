@@ -23,6 +23,22 @@ header {
     border-bottom: 1px solid #111;
 }
 
+#submit {
+    cursor: pointer;
+    outline: 0;
+    color: #fff;
+    background-color: #0ebb48;
+    border-color: #0ebb48;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    font-size: 16px;
+    border-radius: .25rem;
+}
+
 .main-content {
     padding-top: 50px;
     margin-left: 30%;
