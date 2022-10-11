@@ -30,10 +30,11 @@
 <script type="module">
   // initialiaze nbGuess
   let nbGuess = 1
-
+  let userName = null
   // ON LOAD
   $(document).ready(function () {
-
+    
+   
     // LOADING OF TODAY'S WORD
     $.get('/text', (data) => {
 
@@ -58,14 +59,20 @@
 
       // notify today's word is loaded
       console.log('word of the day loaded !')
+    }) 
+    
+    // LOAD USER NAME IN SESSION
+    $.get("/session",(data)=>{
+      userName=data
+      if (userName) {
+        const sessionName = userName
+        document.getElementById('name-storage').innerHTML = `Bonjour ${sessionName}`
+      }
     })
 
-
     // show session Name
-    if (sessionStorage.getItem('name')) {
-      const sessionName = sessionStorage.getItem('name')
-      document.getElementById('name-storage').innerHTML = `Bonjour ${sessionName}`
-    }
+    console.log(userName)
+    
 
     // SCORE STORAGE
     if (!sessionStorage.getItem('score')) {
@@ -78,7 +85,6 @@
   // GO TO SCORE PAGE
   document.getElementById("goToScore").addEventListener("submit", function (event) {
     event.preventDefault()
-    console.log('redirection vers page score')
 
     document.location = '/score.html'
   })

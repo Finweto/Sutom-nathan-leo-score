@@ -84,13 +84,25 @@ app.get('/redirect', (req, res) => {
 // token API
 app.get('/token',(req,res)=>{
    
-    console.log("arrivé token")
     // taking code from url params
-    const code = req.query.code
+    const codeReceived = req.query.code
+
+    // read json logins file
+    let logins = JSON.parse(fs.readFileSync('./logins.json'))
+
+    // search throught logins.json to see if code is somewhere
+    foundCode = logins.codes.find( codeName => (codeName.code == codeReceived))
+
+    // if foundCode is not null, code exist in logins file
+    if(foundCode){
+        
+        // creatin token with key nathan-leo
+        const token = jwt.sign(`${foundCode.login}`, 'nathan-leo')
+
+        // returning token to caller
+        res.send(token)
+    }
     
-    // creatin token with key nathan-leo
-    const token = jwt.sign(code, 'nathan-leo')
-    res.send(token)
   })
 
 app.listen(port, () => {

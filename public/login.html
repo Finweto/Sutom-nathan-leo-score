@@ -17,7 +17,7 @@ Entrez votre Name et votre mot de Passe
     // async function to set sessionStorage
     async function setSessionStorage(nameInput) {
         // set name item
-        sessionStorage.setItem('name', nameInput)
+        //sessionStorage.setItem('name', nameInput)
 
         // set anti cheat
         sessionStorage.setItem('previousWord', '')
@@ -43,6 +43,7 @@ Entrez votre Name et votre mot de Passe
 
         // show wrong name or password or redirect with code
         $.post('/verifyLogin', { name: nameInput, password: passwordInput }, async (data) => {
+            console.log("hey je suis la")
             if (data) {
                 await setSessionStorage(nameInput)
 
