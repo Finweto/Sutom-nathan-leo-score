@@ -73,6 +73,7 @@ input {
 }
 
 table {
+    text-align: center;
     color: inherit;
     margin-right: auto;
     margin-left: auto;
