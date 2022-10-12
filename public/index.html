@@ -1,6 +1,9 @@
 <html>
 
-<link rel="stylesheet" type="text/css" href="/css/style.css" />
+<head>
+  <link rel="shortcut icon" href="./images/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="/css/style.css" />
+</head>
 
 <body>
   <header>
@@ -27,7 +30,7 @@
       <input id="redirectSubmit" type="submit" value="Click to log out">
     </form>
   </div>
-  </body>
+</body>
 </body>
 
 </html>
@@ -43,7 +46,7 @@
   // ON LOAD
   $(document).ready(async function () {
     let sessionName = null
-   
+
     // LOADING OF TODAY'S WORD
     $.get('/text', (data) => {
 
@@ -67,11 +70,11 @@
 
       // notify today's word is loaded
       console.log('word of the day loaded !')
-    }) 
-   
+    })
+
     // LOAD USER NAME IN SESSION
-    await $.get("/session",(data)=>{
-      userName=data
+    await $.get("/session", (data) => {
+      userName = data
       if (userName) {
         sessionName = userName
         document.getElementById('name-storage').innerHTML = `Bonjour ${sessionName}`
@@ -79,11 +82,11 @@
     })
 
     // LOAD USER DATA IN LOCAL STORAGE    
-    if(localStorage.getItem("name")!=sessionName){
+    if (localStorage.getItem("name") != sessionName) {
       $.ajax({
         dataType: "json",
         url: "/data",
-        success: function(data){
+        success: function (data) {
           localStorage.setItem("name", sessionName)
           localStorage.setItem("previousWord", data[0].previousWord)
           localStorage.setItem("avgTry", data[0].avgTry)
@@ -91,7 +94,7 @@
           localStorage.setItem("scores", JSON.stringify(data[0].scores))
         }
       });
-      
+
     }
 
     // SCORE 
@@ -165,15 +168,15 @@
         let scores = JSON.parse(localStorage.getItem('scores'))
         scores.push({ mot: clientInput, tries: nbGuess })
         localStorage.setItem('scores', JSON.stringify(scores))
-        
+
 
         // Save data in json file serverside
-        let dataToPush = {score : newScore, previousWord: clientInput, avgTry: avg, nbTry: nbTry, scores: scores}
+        let dataToPush = { score: newScore, previousWord: clientInput, avgTry: avg, nbTry: nbTry, scores: scores }
         console.log(dataToPush)
         $.ajax({
           dataType: "json",
           url: "/saveData",
-          data : dataToPush
+          data: dataToPush
         });
 
 

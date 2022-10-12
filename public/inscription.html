@@ -2,6 +2,11 @@
 
 <html>
 
+<head>
+    <link rel="shortcut icon" href="./images/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+</head>
+
 <body>
     <header>
         <h1>Projet Microservices</h1>
@@ -26,16 +31,16 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
 <script>
-document.getElementById("inscription-form").addEventListener("submit", function (event) {
-    // prevent change of page on submit 
-    event.preventDefault()
+    document.getElementById("inscription-form").addEventListener("submit", function (event) {
+        // prevent change of page on submit 
+        event.preventDefault()
 
-    // get client input
-    const nameInput = event.target[0].value
-    const passwordInput = event.target[1].value
+        // get client input
+        const nameInput = event.target[0].value
+        const passwordInput = event.target[1].value
 
-    // show wrong name or password or redirect with code
-    $.post('/verifyRegister', { name: nameInput, password: passwordInput }, async (res) => {
+        // show wrong name or password or redirect with code
+        $.post('/verifyRegister', { name: nameInput, password: passwordInput }, async (res) => {
             if (res) {
                 console.log('Registering complete')
                 console.log('redirection to login')
@@ -45,6 +50,5 @@ document.getElementById("inscription-form").addEventListener("submit", function 
                 alert('Mot de passe ou login deja utilise')
             }
         })
-})
+    })
 </script>
- 
