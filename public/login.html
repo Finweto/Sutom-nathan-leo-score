@@ -1,24 +1,35 @@
 <link rel="stylesheet" type="text/css" href="/css/style.css" />
 
 <html>
-Bonjour vous êtes dans le login</br>
-Entrez votre Name et votre mot de Passe
-<form id="login-form" action='post'>
-    <input id="inputName" type="text" name="clientName">
-    <input id="inputPassword" type="password" name="clientPassword">
-    <input type="submit" value="Submit Name">
-</form>
+
+<body>
+    <header>
+        <h1>Projet Microservices</h1>
+        <h1>Nathan Oliveira Da Silva - Léo Bernard</h2>
+    </header>
+    <div class="main-content">
+        <h1>Bonjour, veuillez renseigner votre login et mot de passe</h1>
+        <form id="login-form" action='post'>
+            <label for="clientName">Login</label>
+            <input id="inputName" type="text" name="clientName">
+            <label for="clientPassword">Password</label>
+            <input id="inputPassword" type="password" name="clientPassword">
+            </br></br>
+            <input id="submit" type="submit" value="Submit">
+        </form>
+        <a id="inscription" href="/inscription.html">Pas inscrit ? Inscrivez-vous</a>
+    </div>
+</body>
 
 </html>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
 <script type="module">
-    
     document.getElementById("login-form").addEventListener("submit", function (event) {
         // prevent change of page on submit 
         event.preventDefault()
-        
+
         // get client input
         const nameInput = event.target[0].value
         const passwordInput = event.target[1].value
@@ -36,4 +47,5 @@ Entrez votre Name et votre mot de Passe
         })
 
     })
+
 </script>
