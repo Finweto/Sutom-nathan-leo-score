@@ -47,7 +47,6 @@ app.use((req,res,next)=>{
     res.redirect('http://localhost:5000/authorize?client_id=Sutom-nathan-leo&scope=openid,profile&redirect_uri=http://localhost:3000/callback&nounce=XXXX')
   }
 })
-*/
 // ** like this
 // use public files
 app.use(express.static(__dirname+'/public'));
@@ -121,8 +120,18 @@ app.get('/port', (req,res)=>{
 })
 
 // score
-app.get('/score', (req,res)=>{)
-  res.redirect('http://localhost:5001/') 
+app.get('/score', (req,res)=>{
+  let data = JSON.parse(fs.readFileSync('./data.json'))
+  foundData = data.userData.find(user => user.name == req.session.name)
+  scores = JSON.stringify(foundData.data.scores)
+
+  console.log("score = ", scores)
+
+  if(foundData){
+    res.redirect(`http://localhost:5001?${foundData.data.scores}`) 
+  }else{
+    res.redirect(`http://localhost:5001/`) 
+  }
 })
 
 // show simple message to server terminal

@@ -12,18 +12,17 @@ app.use(express.static('public',{index:false}))
 
 // serving public score file
 app.get('/', (req, res) => {
+    console.log(req.query)
+    scores = req.query
+    
     res.sendFile(__dirname + '/public/score.html')
 })
 
 // send user's data
 app.get('/scores', (req,res)=> {
-    /*
-    HERE FIND THE CURRENT'S USER DATAS
-    */
-
+    
     // simple solution for test
-    scores = [{mot:'oui',nbEssais:5},{mot:'non',nbEssais:9}]
-
+    
     res.json(scores)
 })
 
