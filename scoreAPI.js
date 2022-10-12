@@ -26,6 +26,11 @@ app.get('/scores', (req,res)=> {
     res.json(scores)
 })
 
+// go to index
+app.get('/index', (req,res)=>{
+    res.redirect('http://localhost:3000/') 
+  })
+
 app.listen(port, () => {
     console.log(`listening on http://localhost:${port}`)
 })
