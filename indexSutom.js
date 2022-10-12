@@ -64,7 +64,7 @@ app.get('/data', (req,res)=>{
   // Check if user is in file
   foundData = data.userData.find(user => user.name == req.session.name)
   if(foundData){
-    res.send(foundData.data)
+    res.json(foundData.data)
   }
   else {
     res.send("Erreur, data du user introuvable")
@@ -128,7 +128,7 @@ app.get('/score', (req,res)=>{
   console.log("score = ", scores)
 
   if(foundData){
-    res.redirect(`http://localhost:5001?${foundData.data.scores}`) 
+    res.redirect(`http://localhost:5001?name=${req.session.name}`) 
   }else{
     res.redirect(`http://localhost:5001/`) 
   }

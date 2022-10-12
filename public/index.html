@@ -87,11 +87,12 @@
         dataType: "json",
         url: "/data",
         success: function (data) {
+          console.log(data)
           localStorage.setItem("name", sessionName)
-          localStorage.setItem("previousWord", data[0].previousWord)
-          localStorage.setItem("avgTry", data[0].avgTry)
-          localStorage.setItem("nbTry", data[0].nbTry)
-          localStorage.setItem("scores", JSON.stringify(data[0].scores))
+          localStorage.setItem("previousWord", data.previousWord)
+          localStorage.setItem("avgTry", data.avgTry)
+          localStorage.setItem("nbTry", data.nbTry)
+          localStorage.setItem("scores", JSON.stringify(data.scores))
         }
       });
 
