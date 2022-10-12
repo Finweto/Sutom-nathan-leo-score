@@ -37,6 +37,7 @@ app.get('/authorize', (req, res) => {
 // POST login form data
 app.post('/verifyLogin', (req, res) => {
     let logins = JSON.parse(fs.readFileSync('./logins.json'))
+    let data = JSON.parse(fs.readFileSync('./data.json'))
 
     // verify name & password
     foundUser = logins.users.find(user =>
@@ -59,8 +60,20 @@ app.post('/verifyLogin', (req, res) => {
             const newUser_Code = { login: foundUser.login, code: randomCode }
             logins.codes.push(newUser_Code)
         }
-        // change logins.json file
+
+        // verify if data already exist
+        foundData = data.userData.find(user => user.name == foundUser.login)
+        if(foundData){
+        }
+        else {
+            // add new user and set up data
+            const newUser_data = { name: foundUser.login, data: [{score : 0, previousWord : "", avgTry : 0, nbTry : 0, scores :[{mot: "", tries: 0}]}] }
+            data.userData.push(newUser_data)
+        }
+
+        // change logins.json and data.json file
         fs.writeFileSync('./logins.json', JSON.stringify(logins))
+        fs.writeFileSync('./data.json', JSON.stringify(data))
 
         // redirection
         console.log(`redirection to motus using ${redirect_uri}`)

@@ -10,7 +10,6 @@ const fs = require('fs')
 const os =require('os')
 
 
-app.use(cookieParser());
 
 app.use(session({
   secret: 'nathan-leo',
@@ -24,17 +23,16 @@ app.use(session({
 }))
 
 // REDIRECT_URI from authorize (loginAPI)
-app.get('/callback',(req,res)=>{
+app.get('/callback', (req,res)=>{
   let name = ""
   //Make the api call to the auth server to get the token
   request(`http://localhost:5000/token?code=${req.query.code}`, function (error, response, body) {
     let tab= body.split(".");
     name = atob(tab[1])
     req.session.name=name;
-  });
+  })
   // timeout alows to wait for the asynch api call to finish
   setTimeout(function(){
-  res.cookie("name", req.session.name);
   // redirecting to /index
   res.redirect('/')
   },300);
@@ -60,6 +58,41 @@ app.use(express.static(__dirname+'/public'));
 app.get('/', (req, res) => {
   res.sendFile(__dirname+'/public/index.html')
 })
+
+// send the data from data.json to the client
+app.get('/data', (req,res)=>{
+  let tab = null
+  // Use the data.json file
+  let data = JSON.parse(fs.readFileSync('./data.json'))
+  // Check if user is in file
+  foundData = data.userData.find(user => user.name == req.session.name)
+  if(foundData){
+    res.send(foundData.data)
+  }
+  else {
+    res.send("Erreur, data du user introuvable")
+  }
+})
+
+
+app.get('/saveData',(req,res)=>{
+  // Use the data.json file
+  let data = JSON.parse(fs.readFileSync('./data.json'))
+  // Check if user is in file
+  foundData = data.userData.find(user => user.name == req.session.name)
+  if(foundData){
+    // Save data in data.json
+    console.log("hey = ",req.query)
+    foundData.data=req.query
+    fs.writeFileSync('./data.json', JSON.stringify(data))
+    res.send("ok")
+  }
+  else {
+    res.send("Error")
+  }
+
+})
+
 
 
 // send word of the day to app

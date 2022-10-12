@@ -1,14 +1,17 @@
-#syntax=docker/dockerfile:1
+FROM node:12.14.0 as base
 
-FROM node:12.18.1
+WORKDIR /src
+COPY package*.json /
+EXPOSE 3000
+
+FROM base as production
 ENV NODE_ENV=production
+RUN npm ci
+COPY . /
+CMD ["node", "bin/www"]
 
-WORKDIR /app
-
-COPY ["package.json", "package-lock.json*", "./"]
-
-RUN npm install --production
-
-COPY . .
-
-CMD [ "node", "indexSutom.js" ]
+FROM base as dev
+ENV NODE_ENV=development
+RUN npm install -g nodemon && npm install
+COPY . /
+CMD ["nodemon", "bin/www"]

@@ -14,24 +14,6 @@ Entrez votre Name et votre mot de Passe
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 
 <script type="module">
-    // async function to set sessionStorage
-    async function setSessionStorage(nameInput) {
-        // set name item
-        //sessionStorage.setItem('name', nameInput)
-
-        // set anti cheat
-        sessionStorage.setItem('previousWord', '')
-
-        // set score obj
-        sessionStorage.setItem('scores', JSON.stringify([]))
-
-        // set Tries
-        sessionStorage.setItem('avgTry', 0)
-        sessionStorage.setItem('nbTry', 0)
-        
-        console.log('finished setting sessionStorage')
-        return 0
-    }
     
     document.getElementById("login-form").addEventListener("submit", function (event) {
         // prevent change of page on submit 
@@ -43,10 +25,8 @@ Entrez votre Name et votre mot de Passe
 
         // show wrong name or password or redirect with code
         $.post('/verifyLogin', { name: nameInput, password: passwordInput }, async (data) => {
-            console.log("hey je suis la")
+  
             if (data) {
-                await setSessionStorage(nameInput)
-
                 console.log('redirection to main')
                 document.location = `/redirect?name=${data.name}&code=${data.code}`
             }

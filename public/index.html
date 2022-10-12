@@ -31,9 +31,11 @@
   // initialiaze nbGuess
   let nbGuess = 1
   let userName = null
+  let sessionScore = 0
+  localStorage.setItem("score", sessionScore)
   // ON LOAD
-  $(document).ready(function () {
-    
+  $(document).ready(async function () {
+    let sessionName = null
    
     // LOADING OF TODAY'S WORD
     $.get('/text', (data) => {
@@ -60,25 +62,34 @@
       // notify today's word is loaded
       console.log('word of the day loaded !')
     }) 
-    
+   
     // LOAD USER NAME IN SESSION
-    $.get("/session",(data)=>{
+    await $.get("/session",(data)=>{
       userName=data
       if (userName) {
-        const sessionName = userName
+        sessionName = userName
         document.getElementById('name-storage').innerHTML = `Bonjour ${sessionName}`
       }
     })
 
-    // show session Name
-    console.log(userName)
-    
+    // LOAD USER DATA IN LOCAL STORAGE    
+    if(localStorage.getItem("name")!=sessionName){
+      $.ajax({
+        dataType: "json",
+        url: "/data",
+        success: function(data){
+          localStorage.setItem("name", sessionName)
+          localStorage.setItem("previousWord", data[0].previousWord)
+          localStorage.setItem("avgTry", data[0].avgTry)
+          localStorage.setItem("nbTry", data[0].nbTry)
 
-    // SCORE STORAGE
-    if (!sessionStorage.getItem('score')) {
-      sessionStorage.setItem('score', 0)
+          localStorage.setItem("scores", JSON.stringify(data[0].scores))
+        }
+      });
+      
     }
-    const sessionScore = sessionStorage.getItem('score')
+
+    // SCORE 
     document.getElementById('score-storage').innerHTML = `Votre score est : ${sessionScore}`
   })
 
@@ -127,30 +138,41 @@
     if (clientInput === todaysWord.innerHTML) {
 
       // check for cheat
-      if (clientInput != sessionName.getItem('previousWord')) {
+      if (clientInput != localStorage.getItem('previousWord')) {
 
         // change previousWord
-        sessionStorage.setItem('previousWord', clientInput)
+        localStorage.setItem('previousWord', clientInput)
 
         // change score
-        const sessionScore = sessionStorage.getItem('score')
+        const sessionScore = localStorage.getItem('score')
         let newScore = parseInt(sessionScore)
         newScore++
-        sessionScore.setItem('score', newScore)
+        localStorage.setItem('score', newScore)
         document.getElementById('score-storage').innerHTML = `Vous avez trouve ${newScore} mot`
 
         // set tries
-        let nbTry = parseInt(sessionStorage.getItem("nbTry")) + 1;
-        let avg = (parseInt(sessionStorage.getItem("avgTry")) * (nbTry - 1) + nbGuess) / nbTry;
-        sessionStorage.setItem("nbTry", nbTry);
-        sessionStorage.setItem("avgTry", avg);
+        let nbTry = parseInt(localStorage.getItem("nbTry")) + 1;
+        let avg = (parseInt(localStorage.getItem("avgTry")) * (nbTry - 1) + nbGuess) / nbTry;
+        localStorage.setItem("nbTry", nbTry);
+        localStorage.setItem("avgTry", avg);
 
         // add to scores
-        let scores = JSON.parse(sessionStorage.getItem('scores'))
+        let scores = JSON.parse(localStorage.getItem('scores'))
         scores.push({ mot: clientInput, tries: nbGuess })
-        sessionStorage.setItem('scores', JSON.stringify(scores))
+        localStorage.setItem('scores', JSON.stringify(scores))
+        
 
-        // simple message win
+        // Save data in json file serverside
+        let dataToPush = {score : newScore, previousWord: clientInput, avgTry: avg, nbTry: nbTry, scores: scores}
+        console.log(dataToPush)
+        $.ajax({
+          dataType: "json",
+          url: "/saveData",
+          data : dataToPush
+        });
+
+
+        // simple win message
         alert("VOUS AVEZ GAGNE")
       }
 
@@ -158,11 +180,9 @@
         // user is trying to guess the same word again to gain score
         alert("Vous avez déjà trouvé ce mot")
       }
-
     } else {
       nbGuess++
     }
-
   })
 
   document.getElementById("logOut").addEventListener("submit", function (event) {
