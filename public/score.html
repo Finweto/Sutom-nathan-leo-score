@@ -4,6 +4,8 @@
 
 <head>
     <meta charset="UTF-8">
+    <link rel="shortcut icon" href="./images/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
 </head>
 
 <body>
@@ -35,6 +37,9 @@
             </tbody>
         </table>
     </div>
+    <form id="goToIndex" type="submit">
+        <input id="redirectSubmit" type="submit" value="Click to go back to Sutom">
+    </form>
 </body>
 
 </html>
@@ -73,5 +78,13 @@
             }
 
         })
+    })
+
+    // GO TO INDEX
+    document.getElementById("goToIndex").addEventListener("submit", function (event) {
+        event.preventDefault()
+
+
+        document.location = 'http://localhost:5001/index'
     })
 </script>
