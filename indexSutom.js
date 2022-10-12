@@ -79,7 +79,6 @@ app.get('/saveData',(req,res)=>{
   foundData = data.userData.find(user => user.name == req.session.name)
   if(foundData){
     // Save data in data.json
-    console.log("hey = ",req.query)
     foundData.data=req.query
     fs.writeFileSync('./data.json', JSON.stringify(data))
     res.send("ok")
@@ -125,7 +124,6 @@ app.get('/score', (req,res)=>{
   foundData = data.userData.find(user => user.name == req.session.name)
   scores = JSON.stringify(foundData.data.scores)
 
-  console.log("score = ", scores)
 
   if(foundData){
     res.redirect(`http://localhost:5001?name=${req.session.name}`) 

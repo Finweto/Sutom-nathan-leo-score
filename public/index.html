@@ -81,13 +81,14 @@
       }
     })
 
-    // LOAD USER DATA IN LOCAL STORAGE    
+    // LOAD USER DATA IN LOCAL STORAGE 
+    console.log("arrive")
+    console.log("name = ", localStorage.getItem("name"))   
     if (localStorage.getItem("name") != sessionName) {
       $.ajax({
         dataType: "json",
         url: "/data",
         success: function (data) {
-          console.log(data)
           localStorage.setItem("name", sessionName)
           localStorage.setItem("previousWord", data.previousWord)
           localStorage.setItem("avgTry", data.avgTry)
@@ -173,7 +174,6 @@
 
         // Save data in json file serverside
         let dataToPush = { score: newScore, previousWord: clientInput, avgTry: avg, nbTry: nbTry, scores: scores }
-        console.log(dataToPush)
         $.ajax({
           dataType: "json",
           url: "/saveData",
