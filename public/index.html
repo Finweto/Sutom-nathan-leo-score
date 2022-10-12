@@ -88,7 +88,6 @@
           localStorage.setItem("previousWord", data[0].previousWord)
           localStorage.setItem("avgTry", data[0].avgTry)
           localStorage.setItem("nbTry", data[0].nbTry)
-
           localStorage.setItem("scores", JSON.stringify(data[0].scores))
         }
       });
@@ -102,7 +101,6 @@
   // GO TO SCORE
   document.getElementById("goToScore").addEventListener("submit", function (event) {
     event.preventDefault()
-
 
     document.location = 'http://localhost:3000/score'
   })
@@ -192,6 +190,7 @@
     }
   })
 
+  // LOG OUT
   document.getElementById("logOut").addEventListener("submit", function (event) {
     event.preventDefault()
 
