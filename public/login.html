@@ -2,6 +2,11 @@
 
 <html>
 
+<head>
+    <link rel="shortcut icon" href="./images/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+</head>
+
 <body>
     <header>
         <h1>Projet Microservices</h1>
@@ -36,7 +41,7 @@
 
         // show wrong name or password or redirect with code
         $.post('/verifyLogin', { name: nameInput, password: passwordInput }, async (data) => {
-  
+
             if (data) {
                 console.log('redirection to main')
                 document.location = `/redirect?name=${data.name}&code=${data.code}`
