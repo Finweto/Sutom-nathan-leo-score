@@ -58,35 +58,15 @@ app.get('/', (req, res) => {
 
 // send the data from data.json to the client
 app.get('/data', (req,res)=>{
-  let tab = null
-  // Use the data.json file
-  let data = JSON.parse(fs.readFileSync('./data.json'))
-  // Check if user is in file
-  foundData = data.userData.find(user => user.name == req.session.name)
-  if(foundData){
-    res.json(foundData.data)
-  }
-  else {
-    res.send("Erreur, data du user introuvable")
-  }
-})
-
-
-app.get('/saveData',(req,res)=>{
-  // Use the data.json file
-  let data = JSON.parse(fs.readFileSync('./data.json'))
-  // Check if user is in file
-  foundData = data.userData.find(user => user.name == req.session.name)
-  if(foundData){
-    // Save data in data.json
-    foundData.data=req.query
-    fs.writeFileSync('./data.json', JSON.stringify(data))
-    res.send("ok")
-  }
-  else {
-    res.send("Error")
-  }
-
+  let data
+  request(`http://localhost:5001/data?name=${req.session.name}`, function (error, response, body) {
+    data = JSON.parse(body)
+  })
+  // timeout alows to wait for the asynch api call to finish
+  setTimeout(function(){
+    // redirecting to /index
+    res.json(data)
+  },300);
 })
 
 
@@ -118,18 +98,16 @@ app.get('/port', (req,res)=>{
   res.send(`MOTUS APP LISTENING ON ${ourOs} on ${port}`)
 })
 
+
+app.get('/success', (req,res)=>{
+  request(`http://localhost:5001/success?name=${req.session.name}&data=${JSON.stringify(req.query)}`, function (error, response, body) {
+    console.log("err= ", error)
+  })
+})
+
 // score
 app.get('/score', (req,res)=>{
-  let data = JSON.parse(fs.readFileSync('./data.json'))
-  foundData = data.userData.find(user => user.name == req.session.name)
-  scores = JSON.stringify(foundData.data.scores)
-
-
-  if(foundData){
-    res.redirect(`http://localhost:5001?name=${req.session.name}`) 
-  }else{
-    res.redirect(`http://localhost:5001/`) 
-  }
+  res.redirect(`http://localhost:5001?name=${req.session.name}`) 
 })
 
 // show simple message to server terminal

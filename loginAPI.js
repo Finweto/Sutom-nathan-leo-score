@@ -62,17 +62,14 @@ app.post('/verifyLogin', (req, res) => {
             const newUser_Code = { login: foundUser.login, code: randomCode }
             logins.codes.push(newUser_Code)
         }
-
         // verify if data already exist
         foundData = data.userData.find(user => user.name == foundUser.login)
-        if(foundData){
-        }
-        else {
+        if(!foundData){
             // add new user and set up data
-            const newUser_data = { name: foundUser.login, data: [{score : 0, previousWord : "", avgTry : 0, nbTry : 0, scores :[{mot: "", tries: 0}]}] }
+            const newUser_data = { name: foundUser.login, data: [{score : 0, previousWord : "", avgTry : 0, scores :[]}]}
             data.userData.push(newUser_data)
         }
-
+      
         // change logins.json and data.json file
         fs.writeFileSync('./logins.json', JSON.stringify(logins))
         fs.writeFileSync('./data.json', JSON.stringify(data))
@@ -81,6 +78,7 @@ app.post('/verifyLogin', (req, res) => {
         console.log(`redirection to motus using ${redirect_uri}`)
         data = { name: foundUser.login, code: randomCode.toString(), }
         res.send(data)
+        
     }
     // wrong name or password
     else {

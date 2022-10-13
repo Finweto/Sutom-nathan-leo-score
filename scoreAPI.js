@@ -32,6 +32,40 @@ app.get('/scores', (req,res)=> {
     }
 })
 
+app.get('/success', (req,res)=>{
+    const userName = req.query.name
+    const data = JSON.parse(req.query.data)
+
+      // Use the data.json file
+    let dataFile = JSON.parse(fs.readFileSync('./data.json'))
+    // Check if user is in file
+    foundData = dataFile.userData.find(user => user.name == userName)
+    if(foundData){
+        // Save data in data.json
+        foundData.data=data
+        fs.writeFileSync('./data.json', JSON.stringify(dataFile))
+        res.send("ok")
+    }
+    else {
+        res.send("Error")
+    }
+        res.send()
+})
+
+app.get("/data", (req,res)=>{
+    let tab = null
+    // Use the data.json file
+    let data = JSON.parse(fs.readFileSync('./data.json'))
+    // Check if user is in file
+    foundData = data.userData.find(user => user.name == req.query.name)
+    if(foundData){
+      res.json(foundData.data)
+    }
+    else {
+      res.send("Erreur, data du user introuvable")
+    }
+})
+
 // go to index
 app.get('/index', (req,res)=>{
     res.redirect('http://localhost:3000/') 

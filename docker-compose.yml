@@ -1,19 +1,23 @@
 version: '2'
 services:
-  web:
-    build: .
-    command: npm run dev
+  sutom:
+    build: ./sutom/
     volumes:
       - .:/usr/app/
       - /usr/app/node_modules
     ports:
       - "3000:3000"
-    depends_on:
-      - postgres
-    environment:
-      DATABASE_URL: postgres://todoapp@postgres/todos
-  postgres:
-    image: postgres:9.6.2-alpine
-    environment:
-      POSTGRES_USER: todoapp
-      POSTGRES_DB: todos
+  score:
+    build: ./score/
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "5001:5001"
+  auth:
+    build: ./auth/
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "5000:5000"
