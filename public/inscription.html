@@ -1,0 +1,54 @@
+<link rel="stylesheet" type="text/css" href="/css/style.css" />
+
+<html>
+
+<head>
+    <link rel="shortcut icon" href="./images/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+</head>
+
+<body>
+    <header>
+        <h1>Projet Microservices</h1>
+        <h1>Nathan Oliveira Da Silva - Léo Bernard</h2>
+    </header>
+    <div class="main-content">
+        <h1>Inscription</h1>
+        <form id="inscription-form" action='post'>
+            <label for="clientName">Login</label>
+            <input id="inputName" type="text" name="clientName">
+            <label for="clientPassword">Password</label>
+            <input id="inputPassword" type="password" name="clientPassword">
+            </br></br>
+            <input id="submit" type="submit" value="Submit">
+        </form>
+        <a id="login" href="/login.html">Deja inscrit ? Connectez-vous</a>
+    </div>
+</body>
+
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+<script>
+    document.getElementById("inscription-form").addEventListener("submit", function (event) {
+        // prevent change of page on submit 
+        event.preventDefault()
+
+        // get client input
+        const nameInput = event.target[0].value
+        const passwordInput = event.target[1].value
+
+        // show wrong name or password or redirect with code
+        $.post('/verifyRegister', { name: nameInput, password: passwordInput }, async (res) => {
+            if (res) {
+                console.log('Registering complete')
+                console.log('redirection to login')
+                document.location = `/login.html`
+            }
+            else {
+                alert('Mot de passe ou login deja utilise')
+            }
+        })
+    })
+</script>

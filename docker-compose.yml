@@ -1,4 +1,23 @@
-version: "3.7"
+version: '2'
 services:
-  service:
-    image: builderino
+  sutom:
+    build: ./sutom/
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "3000:3000"
+  score:
+    build: ./score/
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "5001:5001"
+  auth:
+    build: ./auth/
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "5000:5000"

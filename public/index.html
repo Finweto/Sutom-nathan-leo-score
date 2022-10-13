@@ -1,26 +1,36 @@
 <html>
 
-<link rel="stylesheet" type="text/css" href="/css/style.css" />
+<head>
+  <link rel="shortcut icon" href="./images/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="/css/style.css" />
+</head>
 
 <body>
-  <h1 id="name-storage"></h1>
-  <h2 id="score-storage"></h2>
-  <h1 id="todaysWordLength"></h1>
-  <form id="sutom-form" action='post'>
-    <input id="inputClient" type="text" name="clientWord">
-    <input type="submit" value="Submit">
-  </form>
-  <span hidden id="word-of-the-day"></span>
-  <div class="tables">
-    <table id="foundWord"></table>
-  </div>
+  <header>
+    <h1>Projet Microservices</h1>
+    <h1>Nathan Oliveira Da Silva - Léo Bernard</h2>
+  </header>
+  <div class="main-content">
+    <h1 id="name-storage"></h1>
+    <h2 id="score-storage"></h2>
+    <h1 id="todaysWordLength"></h1>
+    <form id="sutom-form" action='post'>
+      <input id="inputClient" type="text" name="clientWord">
+      <input id="submit" type="submit" value="Submit">
+    </form>
+    <span hidden id="word-of-the-day"></span>
+    <div class="tables">
+      <table id="foundWord"></table>
+    </div>
 
-  <form id="goToScore" type="submit">
-    <input type="submit" value="Click to see your score">
-  </form>
-  <form id="logOut" type="submit">
-    <input type="submit" value="Click to log out">
-  </form>
+    <form id="goToScore" type="submit">
+      <input id="redirectSubmit" type="submit" value="Click to see your score">
+    </form>
+    <form id="logOut" type="submit">
+      <input id="redirectSubmit" type="submit" value="Click to log out">
+    </form>
+  </div>
+</body>
 </body>
 
 </html>
@@ -30,16 +40,16 @@
 <script type="module">
   // initialiaze nbGuess
   let nbGuess = 1
-
+  let userName = null
   // ON LOAD
-  $(document).ready(function () {
+  $(document).ready(async function () {
+    let sessionName = null
 
     // LOADING OF TODAY'S WORD
     $.get('/text', (data) => {
 
       // get word of the day
       const todaysWord = data.todaysWord
-      console.log(todaysWord)
 
       // change hidden value to know word of the day for devs
       document.getElementById("word-of-the-day").innerHTML = todaysWord
@@ -60,27 +70,41 @@
       console.log('word of the day loaded !')
     })
 
+    // LOAD USER NAME IN SESSION
+    await $.get("/session", (data) => {
+      userName = data
+      if (userName) {
+        sessionName = userName
+        document.getElementById('name-storage').innerHTML = `Bonjour ${sessionName}`
+      }
+    })
 
-    // show session Name
-    if (sessionStorage.getItem('name')) {
-      const sessionName = sessionStorage.getItem('name')
-      document.getElementById('name-storage').innerHTML = `Bonjour ${sessionName}`
+    // LOAD USER DATA IN LOCAL STORAGE   
+    if (localStorage.getItem("name") != sessionName) {
+      await $.ajax({
+        dataType: "json",
+        url: "/data",
+        success: function (data) {
+          localStorage.setItem("name", sessionName)
+          localStorage.setItem("score", data[0].score)
+          localStorage.setItem("previousWord", data[0].previousWord)
+          localStorage.setItem("avgTry", data[0].avgTry)
+          localStorage.setItem("scores", JSON.stringify(data[0].scores))
+          
+        }
+      });
     }
 
-    // SCORE STORAGE
-    if (!sessionStorage.getItem('score')) {
-      sessionStorage.setItem('score', 0)
-    }
-    const sessionScore = sessionStorage.getItem('score')
-    document.getElementById('score-storage').innerHTML = `Votre score est : ${sessionScore}`
+    // SCORE
+    document.getElementById('score-storage').innerHTML = `Votre score est : ${localStorage.getItem("score")}`
+
   })
 
-  // GO TO SCORE PAGE
+  // GO TO SCORE
   document.getElementById("goToScore").addEventListener("submit", function (event) {
     event.preventDefault()
-    console.log('redirection vers page score')
 
-    document.location = '/score.html'
+    document.location = `http://localhost:3000/score`
   })
 
   // FEATURES OF MOTUS
@@ -119,32 +143,40 @@
 
     // check for win 
     if (clientInput === todaysWord.innerHTML) {
-
+      console.log('mot trouve')
       // check for cheat
-      if (clientInput != sessionName.getItem('previousWord')) {
+      if (clientInput != localStorage.getItem('previousWord')) {
 
         // change previousWord
-        sessionStorage.setItem('previousWord', clientInput)
+        localStorage.setItem('previousWord', clientInput)
 
         // change score
-        const sessionScore = sessionStorage.getItem('score')
+        const sessionScore = localStorage.getItem('score')
         let newScore = parseInt(sessionScore)
         newScore++
-        sessionScore.setItem('score', newScore)
+        localStorage.setItem('score', newScore)
         document.getElementById('score-storage').innerHTML = `Vous avez trouve ${newScore} mot`
 
         // set tries
-        let nbTry = parseInt(sessionStorage.getItem("nbTry")) + 1;
-        let avg = (parseInt(sessionStorage.getItem("avgTry")) * (nbTry - 1) + nbGuess) / nbTry;
-        sessionStorage.setItem("nbTry", nbTry);
-        sessionStorage.setItem("avgTry", avg);
+        let avg = (parseInt(localStorage.getItem("avgTry")) * (newScore - 1) + nbGuess) / newScore;
+        localStorage.setItem("avgTry", avg);
 
         // add to scores
-        let scores = JSON.parse(sessionStorage.getItem('scores'))
+        let scores = JSON.parse(localStorage.getItem('scores'))
         scores.push({ mot: clientInput, tries: nbGuess })
-        sessionStorage.setItem('scores', JSON.stringify(scores))
+        localStorage.setItem('scores', JSON.stringify(scores))
 
-        // simple message win
+
+        // Save data in json file serverside
+        let dataToPush = { score: newScore, previousWord: clientInput, avgTry: avg, scores: scores }
+        $.ajax({
+          dataType: "json",
+          url: "/success",
+          data: dataToPush
+        });
+
+
+        // simple win message
         alert("VOUS AVEZ GAGNE")
       }
 
@@ -152,13 +184,12 @@
         // user is trying to guess the same word again to gain score
         alert("Vous avez déjà trouvé ce mot")
       }
-
     } else {
       nbGuess++
     }
-
   })
 
+  // LOG OUT
   document.getElementById("logOut").addEventListener("submit", function (event) {
     event.preventDefault()
 

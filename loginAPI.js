@@ -1,5 +1,4 @@
 const express = require('express')
-const session = require('express-session')
 
 const app = express()
 const fs = require('fs')
@@ -10,6 +9,9 @@ let redirect_uri
 // make req.body from POST usefull
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// use public files (img, css) withoug triggering index distribution
+app.use(express.static('public', { index: false }))
 
 // serving public login file
 app.get('/authorize', (req, res) => {
@@ -37,6 +39,7 @@ app.get('/authorize', (req, res) => {
 // POST login form data
 app.post('/verifyLogin', (req, res) => {
     let logins = JSON.parse(fs.readFileSync('./logins.json'))
+    let data = JSON.parse(fs.readFileSync('./data.json'))
 
     // verify name & password
     foundUser = logins.users.find(user =>
@@ -50,7 +53,7 @@ app.post('/verifyLogin', (req, res) => {
 
         // verify if login already exist
         foundCode = logins.codes.find(user => user.login == foundUser.login)
-        if(foundCode){
+        if (foundCode) {
             // only change the code
             foundCode.code = randomCode
         }
@@ -59,18 +62,54 @@ app.post('/verifyLogin', (req, res) => {
             const newUser_Code = { login: foundUser.login, code: randomCode }
             logins.codes.push(newUser_Code)
         }
-        // change logins.json file
+        // verify if data already exist
+        foundData = data.userData.find(user => user.name == foundUser.login)
+        if(!foundData){
+            // add new user and set up data
+            const newUser_data = { name: foundUser.login, data: [{score : 0, previousWord : "", avgTry : 0, scores :[]}]}
+            data.userData.push(newUser_data)
+        }
+      
+        // change logins.json and data.json file
         fs.writeFileSync('./logins.json', JSON.stringify(logins))
+        fs.writeFileSync('./data.json', JSON.stringify(data))
 
         // redirection
         console.log(`redirection to motus using ${redirect_uri}`)
-        data = {name:foundUser.login,code:randomCode.toString(),}
+        data = { name: foundUser.login, code: randomCode.toString(), }
         res.send(data)
+        
     }
     // wrong name or password
     else {
         console.log('wrong inputs')
         res.send(null)
+    }
+})
+
+// POST register form data
+app.post('/verifyRegister', (req, res) => {
+    let logins = JSON.parse(fs.readFileSync('./logins.json'))
+
+    // verify if name & password already taken
+    foundUser = logins.users.find(user =>
+        (user.login == req.body.name))
+
+    // credential already taken
+    if (foundUser) {
+        console.log('input already taken')
+        res.send(null)
+    }
+    // add new user & code to json file
+    else {
+        const newUser = { login: req.body.name, password: req.body.password }
+        logins.users.push(newUser)
+
+        // change logins.json file
+        fs.writeFileSync('./logins.json', JSON.stringify(logins))
+
+        // redirection
+        res.send('ok')
     }
 })
 
@@ -84,13 +123,25 @@ app.get('/redirect', (req, res) => {
 // token API
 app.get('/token',(req,res)=>{
    
-    console.log("arrivé token")
     // taking code from url params
-    const code = req.query.code
-  
-    // creatin token with key nathan-leo
-    const token = jwt.sign(code, 'nathan-leo')
-    res.send(token)
+    const codeReceived = req.query.code
+
+    // read json logins file
+    let logins = JSON.parse(fs.readFileSync('./logins.json'))
+
+    // search throught logins.json to see if code is somewhere
+    foundCode = logins.codes.find( codeName => (codeName.code == codeReceived))
+
+    // if foundCode is not null, code exist in logins file
+    if(foundCode){
+        
+        // creatin token with key nathan-leo
+        const token = jwt.sign(`${foundCode.login}`, 'nathan-leo')
+
+        // returning token to caller
+        res.send(token)
+    }
+    
   })
 
 app.listen(port, () => {

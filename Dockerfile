@@ -1,14 +1,9 @@
-#syntax=docker/dockerfile:1
+FROM node:12.14.0 as base
 
-FROM node:12.18.1
-ENV NODE_ENV=production
+WORKDIR /src
+COPY package*.json /
+EXPOSE 3000
 
-WORKDIR /app
-
-COPY ["package.json", "package-lock.json*", "./"]
-
-RUN npm install --production
-
+RUN npm install
 COPY . .
-
-CMD [ "node", "indexSutom.js" ]
+CMD ["node", "indexSutom.js"]
